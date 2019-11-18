@@ -8,18 +8,25 @@ export default class SignUpScreen extends React.Component {
       {
           super();
    
-          this.state = { username: '', password: '', loading: false, disabled: false }
-      }
+          this.state = {  username: "", 
+                          password: "",
+                          tcNo: "",
+                          name: "",
+                          surname: "",
+                          phone: "",
+                          eMail: "",
+                          birthDate: "",
+                          loading: false,
+                          disabled: false }
+          }
   
   
   
     saveData = () =>
     {
-      console.log(this.state.username)
-      console.log(this.state.password)
         this.setState({ loading: true, disabled: true }, () =>
         {
-            fetch('http://192.168.1.106:3000/user/',
+            fetch('http://144.122.192.199:3000/users/register',
             {
                 method: 'POST',
                 headers: 
@@ -30,15 +37,14 @@ export default class SignUpScreen extends React.Component {
                 body: JSON.stringify(
                 {
                   
-                    tcNo:"24566494998",
-                    name:"Sezgin",
-                    surname:"Dogan",
-                    telNo:"05548673698",
-                    mail:"abdulkadir.kilavuz@gmail.com",
-                    username:this.state.username,
-                    password:this.state.password,
-                    birthDate: "1993-12-09T22:00:00.000+00:00",
-                  
+                   tcNo : this.state.tcNo,
+                   name : this.state.name,
+                   surname : this.state.surname,
+                   phone : this.state.phone,
+                   eMail : this.state.eMail,
+                   userName : this.state.username,
+                   password : this.state.password,
+                   birthDate : this.state.birthDate
                     
                 })
   
@@ -72,26 +78,32 @@ export default class SignUpScreen extends React.Component {
           <Text>T.C.:</Text>
           <TextInput
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+            onChangeText = {(text) => this.setState({ tcNo: text })}
           />
           <Text>Name:</Text>
           <TextInput
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+            onChangeText = {(text) => this.setState({ name: text })}
           />
           <Text>Surname:</Text>
           <TextInput
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+            onChangeText = {(text) => this.setState({ surname: text })}
           />
           <Text>Phone number:</Text>
           <TextInput
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+            onChangeText = {(text) => this.setState({ phone: text })}
           />
           <Text>E-mail:</Text>
           <TextInput
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+            onChangeText = {(text) => this.setState({ eMail: text })}
           />
           <Text>Birth date:</Text>
           <TextInput
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+            onChangeText = {(text) => this.setState({ birthDate: text })}
           />
           <Button title="Sign Up"
             onPress = { this.saveData }
