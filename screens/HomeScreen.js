@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TextInput, View, Image, Button } from 'react-native';
 import React from 'react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 export default class HomeScreen extends React.Component {
@@ -7,28 +8,35 @@ export default class HomeScreen extends React.Component {
       return (
         <View style={styles.container}>
           <View style={styles.logo}>
-            <Image source={require("../images/bikelogo.png")} />
-          </View> 
-          <View style={styles.login}>
-            <View>
-              <Text>Username:</Text>
-              <TextInput 
-                style={{height:30, width:200, backgroundColor:"#fff"}}
-              />
-              <Text>Password:</Text>
-              <TextInput
-                style={{height:30, width:200, backgroundColor:"#fff"}}
-              />
-            </View>
-            <View style={styles.button}>
-              <Button title="Login"/>
-              <Button title="Sign Up"
-                onPress={() => this.props.navigation.navigate('SignUp')}
-              />
-            </View>
-            <View>
-              <Text style={{color:"#222288"}}>Did you forget your password?</Text>
-            </View>
+            <Image
+              source={require("../images/logo.png")} />
+          </View>
+          <View style={styles.boxes}>
+            <Text style={{marginBottom:3}}>Username:</Text>
+            <TextInput 
+              style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:1, borderRadius:3,
+                      marginBottom:15}} 
+            />
+            <Text style={{marginBottom:3}}>Password:</Text>
+            <TextInput
+              style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:1, borderRadius:3,
+                      marginBottom:15}} 
+            />
+          </View>
+          <View style={styles.buttons}>
+            <TouchableOpacity
+              style={{backgroundColor:"#ccc", width:90, padding:5, margin:10, borderWidth:1, borderRadius:3}}>
+              <Text style={{textAlign:"center", fontWeight:"700"}}>LOGIN</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{backgroundColor:"#ccc", width:90, padding:5, margin:10, borderWidth:1, borderRadius:3}}
+              onPress={() => this.props.navigation.navigate('SignUp')}
+            >
+              <Text style={{textAlign:"center", fontWeight:"700"}}>SIGN UP</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.forget}>
+            <Text style={{color:"#222288"}}>Did you forget your password?</Text>
           </View>
         </View>
       );
@@ -39,25 +47,35 @@ export default class HomeScreen extends React.Component {
     
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#60ec80',
+      flex:1,
+      flexDirection:'column',
+      backgroundColor: '#fff',
       alignItems: 'center',
       justifyContent: 'center',
     },
     logo:{
-      flex: 3,
-      justifyContent: 'flex-end',
-    },
-    login: {
       flex: 2,
-      backgroundColor: '#60ec80',
-      alignItems: 'center',
-      justifyContent: 'space-around',
+      justifyContent: 'flex-end',
+      marginBottom: 40
+    },
+    boxes: {
+      flex: 1,
+      //backgroundColor: '#60ec80',
+      //alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 20
+    },
+    buttons:{
+      flex:1,
+      flexDirection: 'row',
+      justifyContent: 'space-around'
     },
     button:{
-      flexDirection: 'row',
-      justifyContent: 'space-around',
-      alignItems: 'center',
-      alignContent: 'center',
+      height:40,
+      width:70,
+      margin: 10
     },
+    forget:{
+      flex:1
+    }
 });
