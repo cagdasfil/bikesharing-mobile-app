@@ -1,8 +1,15 @@
 import {Text, TextInput, View, Button } from 'react-native';
 import React from 'react';
-
+import { Ionicons } from '@expo/vector-icons';
 
 export default class SignUpScreen extends React.Component {
+
+  static navigationOptions = {
+    title: 'SignUp',
+    drawerIcon: ({ focused }) => (
+      <Ionicons name="md-add-circle-outline" size={24} color={focused ? 'blue' : 'black'} />
+    ),
+  };
 
   constructor(){
         super();
