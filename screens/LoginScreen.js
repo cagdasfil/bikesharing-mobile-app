@@ -7,10 +7,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default class LoginScreen extends React.Component {
 
   static navigationOptions = {
-    title: 'Login',
-    drawerIcon: ({ focused }) => (
-      <Ionicons name="md-unlock" size={24} color={focused ? 'blue' : 'black'} />
-    ),
+    drawerLabel: () => null,
     drawerLockMode: 'locked-closed',
   };
 

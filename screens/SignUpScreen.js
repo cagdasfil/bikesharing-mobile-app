@@ -5,10 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 export default class SignUpScreen extends React.Component {
 
   static navigationOptions = {
-    title: 'SignUp',
-    drawerIcon: ({ focused }) => (
-      <Ionicons name="md-add-circle-outline" size={24} color={focused ? 'blue' : 'black'} />
-    ),
+    drawerLabel: () => null,
     drawerLockMode: 'locked-closed',
   };
 
