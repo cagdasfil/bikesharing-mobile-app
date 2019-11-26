@@ -9,6 +9,7 @@ export default class SignUpScreen extends React.Component {
     drawerIcon: ({ focused }) => (
       <Ionicons name="md-add-circle-outline" size={24} color={focused ? 'blue' : 'black'} />
     ),
+    drawerLockMode: 'locked-closed',
   };
 
   constructor(){

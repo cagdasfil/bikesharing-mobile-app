@@ -11,6 +11,7 @@ export default class LoginScreen extends React.Component {
     drawerIcon: ({ focused }) => (
       <Ionicons name="md-unlock" size={24} color={focused ? 'blue' : 'black'} />
     ),
+    drawerLockMode: 'locked-closed',
   };
 
   render(){
