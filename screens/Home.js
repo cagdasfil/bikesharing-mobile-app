@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Header } from 'react-native-elements';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export default class HomeScreen extends React.Component{
+export default class Home extends React.Component{
 
     static navigationOptions = {
         title: 'Home',

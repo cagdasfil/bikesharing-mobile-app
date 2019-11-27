@@ -1,35 +1,38 @@
 import { createStackNavigator } from 'react-navigation-stack';
 import {createAppContainer} from 'react-navigation';
-import LoginScreen from './screens/LoginScreen';
-import SignUpScreen from './screens/SignUpScreen';
+import Login from './screens/Login';
+import SignUp from './screens/SignUp';
 import {createDrawerNavigator} from 'react-navigation-drawer';
-import HomeScreen from './screens/HomeScreen';
+import Home from './screens/Home';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-
+import RecoveryPassword from './screens/RecoveryPassword';
+import ResetPassword from './screens/ResetPassword';
 
 
 const AppNavigator = createDrawerNavigator(
     {
-        Home: { screen: HomeScreen }, 
-        Login: { screen: LoginScreen },
-        SignUp: { screen: SignUpScreen },
-        Dockers: {screen: HomeScreen, navigationOptions:{title:"Dockers", drawerIcon: ({ focused }) => (
+        Home: { screen: Home }, 
+        Login: { screen: Login },
+        SignUp: { screen: SignUp },
+        Recovery: { screen: RecoveryPassword},
+        Reset: { screen: ResetPassword},
+        Dockers: {screen: Home, navigationOptions:{title:"Dockers", drawerIcon: ({ focused }) => (
             <Ionicons name="md-pin" size={24} color={focused ? 'blue' : 'black'} />
           )} },
-        Balance: {screen: HomeScreen, navigationOptions:{title:"Balance", drawerIcon: ({ focused }) => (
+        Balance: {screen: Home, navigationOptions:{title:"Balance", drawerIcon: ({ focused }) => (
             <Ionicons name="md-wallet" size={24} color={focused ? 'blue' : 'black'} />
           )} },
-        UsageHistory: {screen: HomeScreen, navigationOptions:{title:"Usage History", drawerIcon: ({ focused }) => (
+        UsageHistory: {screen: Home, navigationOptions:{title:"Usage History", drawerIcon: ({ focused }) => (
             <Ionicons name="md-bicycle" size={24} color={focused ? 'blue' : 'black'} />
           )} },
-        Notifications: {screen: HomeScreen, navigationOptions:{title:"Notifications", drawerIcon: ({ focused }) => (
+        Notifications: {screen: Home, navigationOptions:{title:"Notifications", drawerIcon: ({ focused }) => (
             <Ionicons name="md-notifications" size={24} color={focused ? 'blue' : 'black'} />
           )} },
-        Report: {screen: HomeScreen, navigationOptions:{title:"Report", drawerIcon: ({ focused }) => (
+        Report: {screen: Home, navigationOptions:{title:"Report", drawerIcon: ({ focused }) => (
             <Ionicons name="md-alert" size={24} color={focused ? 'blue' : 'black'} />
           )} },
-        Settings: {screen: HomeScreen, navigationOptions:{title:"Settings", drawerIcon: ({ focused }) => (
+        Settings: {screen: Home, navigationOptions:{title:"Settings", drawerIcon: ({ focused }) => (
             <Ionicons name="md-settings" size={24} color={focused ? 'blue' : 'black'} />
           )} },
 

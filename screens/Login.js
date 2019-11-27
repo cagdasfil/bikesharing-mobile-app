@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 
 
-export default class LoginScreen extends React.Component {
+export default class Login extends React.Component {
 
   static navigationOptions = {
     drawerLabel: () => null,
@@ -45,9 +45,12 @@ export default class LoginScreen extends React.Component {
           </TouchableOpacity>
         </View>
         <View style={styles.forget}>
-          <Text 
-            style={{color:"#222288"}}
-            >Did you forget your password?</Text>
+          <TouchableOpacity onPress={ () => this.props.navigation.navigate('Recovery') }>
+            <Text 
+              style={{color:"#222288"}}
+              >Did you forget your password?
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
