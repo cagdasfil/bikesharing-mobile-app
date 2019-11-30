@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import RecoveryPassword from './screens/RecoveryPassword';
 import ResetPassword from './screens/ResetPassword';
-
+import QRScanner from './QRScanner';
 
 const AppNavigator = createDrawerNavigator(
     {
@@ -35,6 +35,7 @@ const AppNavigator = createDrawerNavigator(
         Settings: {screen: Home, navigationOptions:{title:"Settings", drawerIcon: ({ focused }) => (
             <Ionicons name="md-settings" size={24} color={focused ? 'blue' : 'black'} />
           )} },
+          QRScanner: {screen: QRScanner},
 
     },
     {

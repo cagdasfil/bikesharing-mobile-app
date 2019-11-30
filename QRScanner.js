@@ -4,6 +4,12 @@ import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 
 export default class QRScanner extends React.Component {
+
+  static navigationOptions = {
+    drawerLabel: () => null,
+    drawerLockMode: 'locked-closed',
+  };
+
   state = {
     hasCameraPermission: null,
     scanned: false,
