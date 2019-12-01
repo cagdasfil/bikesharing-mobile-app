@@ -25,17 +25,7 @@ export default class Home extends React.Component{
                     placement="left"
                     leftComponent={{ icon: 'menu', color: '#fff', onPress: () => this.props.navigation.openDrawer() }}
                     centerComponent={{ text: 'HOME', style: { color: '#fff', alignItems: 'center' } }}
-                />    
-                <View style={{marginTop:400, alignItems:'center'}} >
-                    <TouchableOpacity>
-                        <Ionicons 
-                            onPress={()=>{this.props.navigation.navigate('QRScanner')}} 
-                            name="md-qr-scanner"
-                            size={60} 
-                            color={'black'}
-                        />
-                    </TouchableOpacity>
-                </View>
+                />
             </View>
         );
     }

@@ -9,10 +9,42 @@ import React from 'react';
 import RecoveryPassword from './screens/RecoveryPassword';
 import ResetPassword from './screens/ResetPassword';
 import QRScanner from './QRScanner';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+
+const HomeStack = createBottomTabNavigator(
+  {
+    Tab1: {screen: Home},
+    Scan: {screen: QRScanner},
+    Tab2: {screen: SignUp}
+  },
+  {
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let IconComponent = Ionicons;
+        let iconName;
+        if (routeName === 'Tab1') {
+
+        }
+        else if (routeName === 'Scan') {
+          iconName = 'md-qr-scanner';
+        }
+        else if (routeName === 'Tab2') {
+
+        }
+        return <IconComponent name={iconName} size={40} color={tintColor} />;
+      },
+    }),
+    tabBarOptions: {
+      activeTintColor: 'tomato',
+      inactiveTintColor: 'gray',
+    },
+  }
+);
 
 const AppNavigator = createDrawerNavigator(
     {
-        Home: { screen: Home }, 
+        Home: { screen: HomeStack }, 
         Login: { screen: Login },
         SignUp: { screen: SignUp },
         Recovery: { screen: RecoveryPassword},
