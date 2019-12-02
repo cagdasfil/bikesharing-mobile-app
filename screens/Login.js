@@ -11,6 +11,42 @@ export default class Login extends React.Component {
     drawerLockMode: 'locked-closed',
   };
 
+  constructor(){
+    super();
+    this.state = {  identifier: "", 
+                    password: "",
+                    loading: false,
+                    disabled: false 
+                  }
+  }
+
+  saveData = () => {
+    this.setState({ loading: true, disabled: true }, () => {
+      fetch('http://35.246.82.72/auth/local', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            identifier : this.state.identifier,
+            password : this.state.password
+        })
+      }).then((response) => response.json()).then((responseJson) => {
+            this.setState({ loading: false, disabled: false });
+            if ( "error" in responseJson ){
+              alert("Wrong username/email or password!");
+            }
+            else{
+              this.props.navigation.navigate('Home');
+            }
+        }).catch((error) => {
+            console.error(error);
+            this.setState({ loading: false, disabled: false });
+          });
+    });
+  }
+
   render(){
     return (
       <View style={styles.container}>
@@ -22,18 +58,20 @@ export default class Login extends React.Component {
           <Text style={{marginBottom:3}}>Username:</Text>
           <TextInput 
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:1, borderRadius:3,
-                    marginBottom:15}} 
+                    marginBottom:15}}
+            onChangeText = {(text) => this.setState({ identifier: text })}
           />
           <Text style={{marginBottom:3}}>Password:</Text>
           <TextInput
             style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:1, borderRadius:3,
-                    marginBottom:15}} 
+                    marginBottom:15}}
+            onChangeText = {(text) => this.setState({ password: text })}
           />
         </View>
         <View style={styles.buttons}>
           <TouchableOpacity
             style={{backgroundColor:"#ccc", width:90, padding:5, margin:10, borderWidth:1, borderRadius:3}}
-              onPress={() => this.props.navigation.navigate('Home')}
+              onPress={ this.saveData /*this.props.navigation.navigate('Home')*/}
           >
             <Text style={{textAlign:"center", fontWeight:"700"}}>LOGIN</Text>
           </TouchableOpacity>
