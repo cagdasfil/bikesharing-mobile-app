@@ -1,16 +1,17 @@
 import { createStackNavigator } from 'react-navigation-stack';
 import {createAppContainer} from 'react-navigation';
-import Login from './screens/Login';
-import SignUp from './screens/SignUp';
+import Login from '../screens/Login';
+import SignUp from '../screens/SignUp';
 import {createDrawerNavigator} from 'react-navigation-drawer';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
-import RecoveryPassword from './screens/RecoveryPassword';
-import ResetPassword from './screens/ResetPassword';
-import QRScanner from './screens/home_screens/QRScanner';
+import RecoveryPassword from '../screens/RecoveryPassword';
+import ResetPassword from '../screens/ResetPassword';
+import QRScanner from '../screens/home_screens/QRScanner';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
-import Balance from './screens/home_screens/Balance';
-import Dockers from './screens/home_screens/Dockers';
+import Balance from '../screens/home_screens/Balance';
+import Dockers from '../screens/home_screens/Dockers';
+import Session from '../screens/active_home_screens/Session';
 
 const HomeStack = createBottomTabNavigator(
   {
@@ -52,25 +53,35 @@ const AppNavigator = createDrawerNavigator(
     {
         Home: { screen: HomeStack, navigationOptions:{title:"Home", drawerIcon: ({ focused }) => (
           <Ionicons name="md-home" size={24} color={focused ? 'blue' : 'black'} />
-          )} }, 
+        )}}, 
+        
         Login: { screen: Login },
+        
         SignUp: { screen: SignUp },
+        
         Recovery: { screen: RecoveryPassword},
+        
         Reset: { screen: ResetPassword},
+        
         UsageHistory: {screen: HomeStack, navigationOptions:{title:"Usage History", drawerIcon: ({ focused }) => (
             <Ionicons name="md-bicycle" size={24} color={focused ? 'green' : 'black'} />
-          )} },
+        )} },
+        
         Notifications: {screen: HomeStack, navigationOptions:{title:"Notifications", drawerIcon: ({ focused }) => (
             <Ionicons name="md-notifications" size={24} color={focused ? 'yellow' : 'black'} />
-          )} }, 
+        )} }, 
+        
         Report: {screen: HomeStack, navigationOptions:{title:"Report", drawerIcon: ({ focused }) => (
             <Ionicons name="md-alert" size={24} color={focused ? 'red' : 'black'} />
-          )} },
+        )} },
+        
         Settings: {screen: HomeStack, navigationOptions:{title:"Settings", drawerIcon: ({ focused }) => (
             <Ionicons name="md-settings" size={24} color={focused ? 'grey' : 'black'} />
-          )} },
-          QRScanner: {screen: QRScanner},
+        )} },
+        
+        QRScanner: {screen: QRScanner},
 
+        Session: {screen: Session}
     },
     {
         initialRouteName: "Login",

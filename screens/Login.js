@@ -29,8 +29,8 @@ export default class Login extends React.Component {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            identifier : this.state.identifier,
-            password : this.state.password
+            identifier : "cagdas",//this.state.identifier,
+            password : "Cgds1996"//this.state.password
         })
       }).then((response) => response.json()).then((responseJson) => {
             this.setState({ loading: false, disabled: false });
@@ -52,7 +52,7 @@ export default class Login extends React.Component {
       <View style={styles.container}>
         <View style={styles.logo}>
           <Image
-            source={require("../images/logo.png")} />
+            source={require("../assets/images/logo.png")} />
         </View>
         <View style={styles.boxes}>
           <Text style={{marginBottom:3}}>Username:</Text>

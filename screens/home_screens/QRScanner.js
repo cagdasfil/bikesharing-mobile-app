@@ -15,6 +15,41 @@ export default class QRScanner extends React.Component {
     scanned: false,
   };
 
+
+  constructor(){
+    super();
+    this.state = {  qrcode: "", 
+                    loading: false,
+                    disabled: false 
+                  }
+  }
+
+  saveData = () => {
+    this.setState({ loading: true, disabled: true }, () => {
+      fetch('http://35.246.82.72/', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            qrcode : this.state.qrcode,
+        })
+      }).then((response) => response.json()).then((responseJson) => {
+            this.setState({ loading: false, disabled: false });
+            if ( "error" in responseJson ){
+              alert("QR code is not recognized!");
+            }
+            else{
+              this.props.navigation.navigate('Home');
+            }
+        }).catch((error) => {
+            console.error(error);
+            this.setState({ loading: false, disabled: false });
+          });
+    });
+  }
+
   async componentDidMount() {
     this.getPermissionsAsync();
   }
