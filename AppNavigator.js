@@ -10,6 +10,8 @@ import RecoveryPassword from './screens/RecoveryPassword';
 import ResetPassword from './screens/ResetPassword';
 import QRScanner from './QRScanner';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
+import Watch from './screens/Watch';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 const HomeStack = createBottomTabNavigator(
   {
@@ -49,11 +51,13 @@ const AppNavigator = createDrawerNavigator(
         SignUp: { screen: SignUp },
         Recovery: { screen: RecoveryPassword},
         Reset: { screen: ResetPassword},
+        Watch: {screen: Watch},
         Dockers: {screen: Home, navigationOptions:{title:"Dockers", drawerIcon: ({ focused }) => (
             <Ionicons name="md-pin" size={24} color={focused ? 'blue' : 'black'} />
           )} },
-        Balance: {screen: Home, navigationOptions:{title:"Balance", drawerIcon: ({ focused }) => (
+        Balance: {screen: Watch, navigationOptions:{title:"Balance", drawerIcon: ({ focused }) => (
             <Ionicons name="md-wallet" size={24} color={focused ? 'blue' : 'black'} />
+            
           )} },
         UsageHistory: {screen: Home, navigationOptions:{title:"Usage History", drawerIcon: ({ focused }) => (
             <Ionicons name="md-bicycle" size={24} color={focused ? 'blue' : 'black'} />
