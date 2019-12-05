@@ -49,6 +49,37 @@ const HomeStack = createBottomTabNavigator(
   }
 );
 
+const SessionStack = createBottomTabNavigator(
+  {
+    Session: {screen: Session},
+    Dockers: {screen: Dockers}
+  },
+  {
+    defaultNavigationOptions: ({ navigation }) => ({
+      tabBarIcon: ({ focused, horizontal, tintColor }) => {
+        const { routeName } = navigation.state;
+        let IconComponent = Ionicons;
+        let iconName;
+        let size;
+        if (routeName === 'Session') {
+          iconName = 'md-time';
+          size = 30;
+        }
+        else if (routeName === 'Dockers') {
+          iconName = 'md-pin';
+          size = 30;
+        }
+        return <IconComponent name={iconName} size={size} color={tintColor} />;
+      },
+    }),
+    tabBarOptions: {
+      activeTintColor: 'tomato',
+      inactiveTintColor: 'gray',
+      style: {height:80},
+    },
+  }
+);
+
 const AppNavigator = createDrawerNavigator(
     {
         Home: { screen: HomeStack, navigationOptions:{title:"Home", drawerIcon: ({ focused }) => (
@@ -81,10 +112,12 @@ const AppNavigator = createDrawerNavigator(
         
         QRScanner: {screen: QRScanner},
 
-        Session: {screen: Session}
+        Session: {screen: SessionStack, navigationOptions:{title:"Session", drawerIcon: ({ focused }) => (
+          <Ionicons name="md-time" size={24} color={focused ? 'blue' : 'black'} />
+        )}},
     },
     {
-        initialRouteName: "Login",
+        initialRouteName: "Session",
     }
 );
 
