@@ -117,7 +117,7 @@ const AppNavigator = createDrawerNavigator(
         )}},
     },
     {
-        initialRouteName: "Home",
+        initialRouteName: "Login",
     }
 );
 

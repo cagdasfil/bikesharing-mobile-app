@@ -18,7 +18,8 @@ export default class QRScanner extends React.Component {
 
   constructor(){
     super();
-    this.state = {  qrcode: "", 
+    this.state = {  qrCode: "",
+                    userId: "",
                     loading: false,
                     disabled: false 
                   }
@@ -26,22 +27,25 @@ export default class QRScanner extends React.Component {
 
   saveData = () => {
     this.setState({ loading: true, disabled: true }, () => {
-      fetch('http://35.246.82.72/', {
+      fetch('http://35.234.156.204/usages/startSession', {
         method: 'POST',
         headers: {
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            qrcode : this.state.qrcode,
+            qrCode : this.state.qrCode,
+            userId : "5de53b46913bba38ecc6bc5a"//this.state.userId,
         })
       }).then((response) => response.json()).then((responseJson) => {
             this.setState({ loading: false, disabled: false });
             if ( "error" in responseJson ){
               alert("QR code is not recognized!");
+              console.log(responseJson);
             }
             else{
-              this.props.navigation.navigate('Home');
+              console.log(responseJson.status);
+              this.props.navigation.navigate('Session');
             }
         }).catch((error) => {
             console.error(error);
@@ -88,7 +92,8 @@ export default class QRScanner extends React.Component {
   }
 
   handleBarCodeScanned = ({ type, data }) => {
-    this.setState({ scanned: true });
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    this.setState({ scanned: true, qrCode: data });
+    this.saveData();
+    //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 }

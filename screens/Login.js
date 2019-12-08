@@ -22,7 +22,7 @@ export default class Login extends React.Component {
 
   saveData = () => {
     this.setState({ loading: true, disabled: true }, () => {
-      fetch('http://35.246.82.72/auth/local', {
+      fetch('http://35.234.156.204/auth/local', {
         method: 'POST',
         headers: {
             Accept: 'application/json',
