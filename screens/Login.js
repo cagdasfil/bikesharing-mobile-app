@@ -1,7 +1,9 @@
-import { StyleSheet, Text, TextInput, View, Image } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Image, Button } from 'react-native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
+import theme from '../constants/Theme';
+import PasswordInputText from 'react-native-hide-show-password-input';
 
 
 export default class Login extends React.Component {
@@ -38,6 +40,7 @@ export default class Login extends React.Component {
               alert("Wrong username/email or password!");
             }
             else{
+              console.log(responseJson);
               this.props.navigation.navigate('Home');
             }
         }).catch((error) => {
@@ -48,48 +51,56 @@ export default class Login extends React.Component {
   }
 
   render(){
+    const { password } = this.state;
+
     return (
       <View style={styles.container}>
-        <View style={styles.logo}>
           <Image
+            style={{width:300, height:200}}
             source={require("../assets/images/logo.png")} />
-        </View>
-        <View style={styles.boxes}>
-          <Text style={{marginBottom:3}}>Username:</Text>
+          <View style={{flexDirection:'row', alignItems:'center', marginBottom:10,}}>
+          <View style={{alignItems:'center', justifyContent:'center', backgroundColor:theme.COLORS.DIAMOND, width:40, height:40}}>
+          <Ionicons name='md-person' size={26} color={theme.COLORS.JAPANESE_INDIGO}/>
+          </View>
           <TextInput 
-            style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:1, borderRadius:3,
-                    marginBottom:15}}
+            style={{height:40, width:200, backgroundColor:"#fff", paddingLeft:5
+                    }}
             onChangeText = {(text) => this.setState({ identifier: text })}
+            placeholder = "username or e-mail"
           />
-          <Text style={{marginBottom:3}}>Password:</Text>
+          </View>
+          <View style={{flexDirection:'row', alignItems:'center', marginBottom:35}}>
+          <View style={{alignItems:'center', justifyContent:'center', backgroundColor:theme.COLORS.DIAMOND, width:40, height:40}}>
+          <Ionicons name='md-lock' size={26} color={theme.COLORS.JAPANESE_INDIGO}/>
+          </View>
           <TextInput
-            style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:1, borderRadius:3,
-                    marginBottom:15}}
+            style={{height:40, width:200, backgroundColor:"#fff", paddingLeft:5
+                    }}
             onChangeText = {(text) => this.setState({ password: text })}
+            placeholder = "password"
+            secureTextEntry
           />
-        </View>
-        <View style={styles.buttons}>
+          </View>
+          <View style={{flexDirection:'row'}}>
           <TouchableOpacity
-            style={{backgroundColor:"#ccc", width:90, padding:5, margin:10, borderWidth:1, borderRadius:3}}
+            style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
               onPress={ this.saveData /*this.props.navigation.navigate('Home')*/}
           >
-            <Text style={{textAlign:"center", fontWeight:"700"}}>LOGIN</Text>
+            <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>LOGIN</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={{backgroundColor:"#ccc", width:90, padding:5, margin:10, borderWidth:1, borderRadius:3}}
+            style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
             onPress={() => this.props.navigation.navigate('SignUp')}
           >
-            <Text style={{textAlign:"center", fontWeight:"700"}}>SIGN UP</Text>
+            <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>SIGN UP</Text>
           </TouchableOpacity>
-        </View>
-        <View style={styles.forget}>
+          </View>
           <TouchableOpacity onPress={ () => this.props.navigation.navigate('Recovery') }>
             <Text 
-              style={{color:"#222288"}}
+              style={{marginTop:20, color:theme.COLORS.JAPANESE_INDIGO}}
               >Did you forget your password?
             </Text>
           </TouchableOpacity>
-        </View>
       </View>
     );
   }
@@ -100,22 +111,22 @@ const styles = StyleSheet.create({
     container: {
       flex:1,
       flexDirection:'column',
-      backgroundColor: '#fff',
+      backgroundColor: theme.COLORS.SEASHELL,
       alignItems: 'center',
       justifyContent: 'center',
     },
     logo:{
-      flex: 2,
+      flex: 5,
       justifyContent: 'flex-end',
       marginBottom: 40
     },
     boxes: {
-      flex: 1,
+      flex: 2,
       justifyContent: 'center',
       marginBottom: 20
     },
     buttons:{
-      flex:1,
+      //flex:2,
       flexDirection: 'row',
       justifyContent: 'space-around'
     },
@@ -125,6 +136,6 @@ const styles = StyleSheet.create({
       margin: 10
     },
     forget:{
-      flex:1
+      flex:2
     }
 });
