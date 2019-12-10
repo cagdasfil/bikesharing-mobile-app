@@ -16,7 +16,7 @@ export default class Session extends React.Component{
         
         this.state = {
           amount: "",
-          sessionStartTime: new Date("2019/12/07"),
+          sessionStartTime: new Date("2019/12/09"),
           stopwatchStartTime: 0,
         };
         

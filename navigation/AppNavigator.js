@@ -12,6 +12,7 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import Balance from '../screens/home_screens/Balance';
 import Dockers from '../screens/home_screens/Dockers';
 import Session from '../screens/active_home_screens/Session';
+import theme from '../constants/Theme';
 
 const HomeStack = createBottomTabNavigator(
   {
@@ -42,7 +43,7 @@ const HomeStack = createBottomTabNavigator(
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'tomato',
+      activeTintColor: theme.COLORS.DARK_ORANGE,
       inactiveTintColor: 'gray',
       style: {height:80},
     },
@@ -73,7 +74,7 @@ const SessionStack = createBottomTabNavigator(
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'tomato',
+      activeTintColor: theme.COLORS.DARK_ORANGE,
       inactiveTintColor: 'gray',
       style: {height:80},
     },
