@@ -2,7 +2,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import {createAppContainer} from 'react-navigation';
 import Login from '../screens/Login';
 import SignUp from '../screens/SignUp';
-import {createDrawerNavigator} from 'react-navigation-drawer';
+import {createDrawerNavigator, DrawerActions} from 'react-navigation-drawer';
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import RecoveryPassword from '../screens/RecoveryPassword';
@@ -13,6 +13,8 @@ import Balance from '../screens/home_screens/Balance';
 import Dockers from '../screens/home_screens/Dockers';
 import Session from '../screens/active_home_screens/Session';
 import theme from '../constants/Theme';
+import DrawerItem from '../components/DrawerItem';
+import Menu from './Menu';
 
 const HomeStack = createBottomTabNavigator(
   {
@@ -84,7 +86,7 @@ const SessionStack = createBottomTabNavigator(
 const AppNavigator = createDrawerNavigator(
     {
         Home: { screen: HomeStack, navigationOptions:{title:"Home", drawerIcon: ({ focused }) => (
-          <Ionicons name="md-home" size={24} color={focused ? 'blue' : 'black'} />
+          <Ionicons name="md-home" size={24} color={focused ? 'darkblue' : 'black'} />
         )}}, 
         
         Login: { screen: Login },
@@ -117,9 +119,7 @@ const AppNavigator = createDrawerNavigator(
           <Ionicons name="md-time" size={24} color={focused ? 'blue' : 'black'} />
         )}},
     },
-    {
-        initialRouteName: "Login",
-    }
+    Menu
 );
 
 const AppContainer = createAppContainer(AppNavigator);
