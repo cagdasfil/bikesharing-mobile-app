@@ -3,11 +3,6 @@ import React from 'react';
 
 export default class RecoveryPassword extends React.Component {
 
-    static navigationOptions = {
-        drawerLabel: () => null,
-        drawerLockMode: 'locked-closed',
-    };
-
     render() {
       return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-start', paddingVertical:100, backgroundColor: '#f5fcff'}}>

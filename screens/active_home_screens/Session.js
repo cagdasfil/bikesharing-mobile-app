@@ -6,10 +6,6 @@ import { Stopwatch, Timer } from 'react-native-stopwatch-timer';
 
 export default class Session extends React.Component{
 
-    static navigationOptions = {
-        drawerLabel: () => null,
-    };
-
     constructor(props) {
         
         super(props);

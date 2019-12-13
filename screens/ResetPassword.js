@@ -3,11 +3,6 @@ import React from 'react';
 
 export default class ResetPassword extends React.Component {
 
-    static navigationOptions = {
-        drawerLabel: () => null,
-        drawerLockMode: 'locked-closed',
-    };
-
     constructor()
     {
       super();

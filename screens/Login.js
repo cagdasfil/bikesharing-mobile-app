@@ -3,15 +3,8 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../constants/Theme';
-import PasswordInputText from 'react-native-hide-show-password-input';
-
 
 export default class Login extends React.Component {
-
-  static navigationOptions = {
-    drawerLabel: () => null,
-    drawerLockMode: 'locked-closed',
-  };
 
   constructor(){
     super();

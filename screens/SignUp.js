@@ -4,11 +4,6 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default class SignUp extends React.Component {
 
-  static navigationOptions = {
-    drawerLabel: () => null,
-    drawerLockMode: 'locked-closed',
-  };
-
   constructor(){
         super();
         this.state = {  username: "", 

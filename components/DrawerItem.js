@@ -1,6 +1,8 @@
 import React from "react";
 import { StyleSheet } from "react-native";
 import { View, Text} from "react-native";
+import { Ionicons } from '@expo/vector-icons';
+
 
 import theme from "../constants/Theme";
 
@@ -11,53 +13,13 @@ class DrawerItem extends React.Component {
     switch (title) {
       case "Home":
         return (
-          <Ionicon
-            name="shop"
+          <Ionicons
+            name="md-home"
             family="ArgonExtra"
-            size={10}
+            size={22}
             color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
           />
         );
-      case "Elements":
-        return (
-          <Ionicon
-            name="map-big"
-            family="ArgonExtra"
-            size={12}
-            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
-          />
-        );
-      case "Articles":
-        return (
-          <Ionicon
-            name="spaceship"
-            family="ArgonExtra"
-            size={12}
-            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
-          />
-        );
-      case "Profile":
-        return (
-          <Ionicon
-            name="chart-pie-35"
-            family="ArgonExtra"
-            size={12}
-            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
-          />
-        );
-      case "Account":
-        return (
-          <Ionicon
-            name="calendar-date"
-            family="ArgonExtra"
-            size={12}
-            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
-          />
-        );
-      case "Getting Started":
-        return <Ionicon />;
-      case "Log out":
-        return <Ionicon />;
       default:
         return null;
     }
@@ -68,19 +30,19 @@ class DrawerItem extends React.Component {
 
     const containerStyles = [
       styles.defaultStyle,
-      focused ? [styles.activeStyle, styles.shadow] : null
+      focused ? [styles.activeStyle, styles.shadow] : null,
     ];
 
     return (
-      <View flex={1} row style={containerStyles}>
-        <View middle flex={0.1} style={{ marginRight: 5 }}>
+      <View style={containerStyles}>
+        <View middle style={{ flex:0.1, alignItems:'flex-start', marginRight: 5 }}>
           {this.renderIcon()}
         </View>
-        <View row center flex={0.9}>
+        <View style={{flex:0.9}}>
           <Text
             size={15}
             bold={focused ? true : false}
-            color={focused ? "white" : "rgba(0,0,0,0.5)"}
+            style= {{color: focused ? "white" : theme.COLORS.JAPANESE_INDIGO, fontWeight: focused ? 'bold' : 'normal'}}
           >
             {title}
           </Text>
@@ -92,15 +54,18 @@ class DrawerItem extends React.Component {
 
 const styles = StyleSheet.create({
   defaultStyle: {
-    paddingVertical: 15,
-    paddingHorizontal: 14
+    flex:1,
+    flexDirection:'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
   },
   activeStyle: {
-    backgroundColor: theme.COLORS.DIAMOND,
-    borderRadius: 4
+    backgroundColor: theme.COLORS.JAPANESE_INDIGO,
+    borderRadius: 4,
   },
   shadow: {
-    shadowColor: theme.COLORS.SEASHELL,
+    shadowColor: theme.COLORS.DIAMOND,
     shadowOffset: {
       width: 0,
       height: 2

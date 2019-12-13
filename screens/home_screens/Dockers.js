@@ -1,6 +1,7 @@
 import { StyleSheet, View, Dimensions, Text } from 'react-native';
 import React from 'react';
 import MapView, { Marker, MapViewAnimated } from 'react-native-maps';
+import theme from '../../constants/Theme';
 
 
 export default class Dockers extends React.Component{
@@ -28,7 +29,7 @@ export default class Dockers extends React.Component{
                 title="17 bikes are available"
               >
                 <View style={styles.marker}>
-                  <Text style={{color:'white', fontWeight:'bold', fontSize:18}}>17</Text>
+                  <Text style={{color:theme.COLORS.SEASHELL, fontWeight:'bold', fontSize:18}}>17</Text>
                 </View>
               </Marker>
             </MapView>
@@ -52,8 +53,8 @@ const styles = StyleSheet.create({
     flex:1,
     alignItems:'center',
     justifyContent:'center',
-    backgroundColor:'green',
-    borderColor:'white', 
+    backgroundColor: theme.COLORS.JAPANESE_INDIGO,
+    borderColor: theme.COLORS.SEASHELL, 
     borderWidth:1,
     width:40,
     height:40,

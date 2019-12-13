@@ -85,11 +85,11 @@ const SessionStack = createBottomTabNavigator(
 
 const AppNavigator = createDrawerNavigator(
     {
+        Login: { screen: Login },
+
         Home: { screen: HomeStack, navigationOptions:{title:"Home", drawerIcon: ({ focused }) => (
           <Ionicons name="md-home" size={24} color={focused ? 'darkblue' : 'black'} />
         )}}, 
-        
-        Login: { screen: Login },
         
         SignUp: { screen: SignUp },
         

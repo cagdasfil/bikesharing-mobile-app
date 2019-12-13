@@ -2,6 +2,8 @@ import * as React from 'react';
 import { Text, View, StyleSheet, Button } from 'react-native';
 import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import theme from '../../constants/Theme';
+
 
 export default class QRScanner extends React.Component {
 
@@ -14,7 +16,6 @@ export default class QRScanner extends React.Component {
     hasCameraPermission: null,
     scanned: false,
   };
-
 
   constructor(){
     super();
@@ -78,6 +79,7 @@ export default class QRScanner extends React.Component {
           flex: 1,
           flexDirection: 'column',
           justifyContent: 'flex-end',
+          backgroundColor: theme.COLORS.SEASHELL
         }}>
         <BarCodeScanner
           onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}

@@ -5,9 +5,13 @@ import {
   StyleSheet,
   Dimensions,
   Image,
-  View
+  View,
+  Text
 } from "react-native";
 import { theme } from "galio-framework";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Ionicons } from '@expo/vector-icons';
+
 
 const { width } = Dimensions.get("screen");
 
@@ -19,6 +23,10 @@ const Drawer = props => (
     <View flex={1}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         <DrawerItems {...props} />
+        <TouchableOpacity style={styles.exit}>
+          <Text style={{fontSize:16, marginRight:5}}>EXIT</Text>
+          <Ionicons name="md-exit" size={24} />
+        </TouchableOpacity>
       </ScrollView>
     </View>
   </View>
@@ -59,8 +67,8 @@ const styles = StyleSheet.create({
   header: {
     //paddingHorizontal: 28,
     //paddingBottom: theme.SIZES.BASE,
-    marginTop: theme.SIZES.BASE * 7,
-    marginBottom: theme.SIZES.BASE * 4,
+    marginTop: theme.SIZES.BASE * 8,
+    marginBottom: theme.SIZES.BASE * 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -68,6 +76,13 @@ const styles = StyleSheet.create({
       width:150,
       height:150,
       borderRadius:75,
+  },
+  exit:{
+    flex:1,
+    flexDirection:'row',
+    alignItems:'center',
+    justifyContent:'center',
+    marginVertical:10,
   }
 });
 
