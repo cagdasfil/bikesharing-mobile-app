@@ -194,51 +194,11 @@ const ArticlesStack = createStackNavigator({
 
 const AppStack = createDrawerNavigator(
     {
-      Login: {
-        screen: Login,
-        navigationOptions: navOpt => ({
-          drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Login" />
-          )
-        })
-      },
       Home: {
         screen: HomeStack,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
             <DrawerItem focused={focused} title="Home" />
-          )
-        })
-      },
-      Session: {
-        screen: SessionStack,
-        navigationOptions: navOpt => ({
-          drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Session" />
-          )
-        })
-      },
-      SignUp: {
-        screen: SignUp,
-        navigationOptions: navOpt => ({
-          drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="SignUp" />
-          )
-        })
-      },
-      Recovery: {
-        screen: RecoveryPassword,
-        navigationOptions: navOpt => ({
-          drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Recovery" />
-          )
-        })
-      },
-      Reset: {
-        screen: ResetPassword,
-        navigationOptions: navOpt => ({
-          drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Reset" />
           )
         })
       },
@@ -271,6 +231,46 @@ const AppStack = createDrawerNavigator(
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
             <DrawerItem focused={focused} title="Settings" />
+          )
+        })
+      },
+      Login: {
+        screen: Login,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            <DrawerItem focused={focused} title="Login" />
+          )
+        })
+      },
+      Session: {
+        screen: SessionStack,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            <DrawerItem focused={focused} title="Session" />
+          )
+        })
+      },
+      SignUp: {
+        screen: SignUp,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            <DrawerItem focused={focused} title="SignUp" />
+          )
+        })
+      },
+      Recovery: {
+        screen: RecoveryPassword,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            <DrawerItem focused={focused} title="Recovery" />
+          )
+        })
+      },
+      Reset: {
+        screen: ResetPassword,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            <DrawerItem focused={focused} title="Reset" />
           )
         })
       },

@@ -1,6 +1,8 @@
 import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import theme from '../../constants/Theme';
+import { Ionicons } from '@expo/vector-icons';
+
 
 export default class Balance extends React.Component{
 
@@ -18,20 +20,29 @@ export default class Balance extends React.Component{
     render () {
         return(
             <View style={styles.container}>
-                <View style={styles.balanceContainer}>
-                    <Text style={styles.balanceText}>
-                        Balance:
-                    </Text>
-                    <Text style={styles.amount}>
-                        {this.state.balance.toFixed(2)} ₺
-                    </Text>
+                <View style={{alignSelf:'stretch', marginTop:50}}>
+                    <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginLeft:10, width:50, height:50,
+                        borderRadius:25, backgroundColor:theme.COLORS.JAPANESE_INDIGO}} 
+                        onPress= {() => this.props.navigation.toggleDrawer()}>
+                        <Ionicons name="md-menu" color={theme.COLORS.SEASHELL} size={35}/>
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.buttons}>
-                    <Text style={styles.buttonText}>ADD MONEY</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.buttons}>
-                    <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
-                </TouchableOpacity>
+                <View style={styles.contentContainer}>
+                    <View style={styles.balanceContainer}>
+                        <Text style={styles.balanceText}>
+                            Balance:
+                        </Text>
+                        <Text style={styles.amount}>
+                            {this.state.balance.toFixed(2)} ₺
+                        </Text>
+                    </View>
+                    <TouchableOpacity style={styles.buttons}>
+                        <Text style={styles.buttonText}>ADD MONEY</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.buttons}>
+                        <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     }
@@ -41,6 +52,11 @@ const styles = StyleSheet.create({
     container:{
         flex:1, 
         alignItems:'center', 
+        backgroundColor: theme.COLORS.SEASHELL,
+    },
+    contentContainer:{
+        flex:1, 
+        alignItems:'center',
         justifyContent:'center',
         backgroundColor: theme.COLORS.SEASHELL,
     },
