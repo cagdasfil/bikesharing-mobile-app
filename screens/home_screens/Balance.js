@@ -20,7 +20,7 @@ export default class Balance extends React.Component{
     render () {
         return(
             <View style={styles.container}>
-                <View style={{alignSelf:'stretch', marginTop:50}}>
+                <View style={{alignSelf:'stretch', marginTop:30}}>
                     <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginLeft:10, width:50, height:50,
                         borderRadius:25, backgroundColor:theme.COLORS.JAPANESE_INDIGO}} 
                         onPress= {() => this.props.navigation.toggleDrawer()}>
@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
         width:250,
         height:250,
         borderRadius:125,
-        marginBottom:30,
+        marginBottom:80,
         backgroundColor: theme.COLORS.DIAMOND,
     },
     balanceText:{
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         width:240, 
         height:40, 
-        marginTop:30, 
+        marginBottom:20, 
         //borderWidth:1,
         //borderRadius:3,
         borderColor: theme.COLORS.JAPANESE_INDIGO,

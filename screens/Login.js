@@ -3,6 +3,8 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../constants/Theme';
+import {AsyncStorage} from 'react-native';
+
 
 export default class Login extends React.Component {
 
@@ -15,6 +17,28 @@ export default class Login extends React.Component {
                     disabled: false 
                   }
   }
+
+  _storeData = async (user) => {
+    try {
+      await AsyncStorage.setItem('user', user);
+    } catch (error) {
+      // Error saving data
+      console.log(user);
+    }
+  };
+
+  _retrieveData = async (user) => {
+    try {
+      const value = await AsyncStorage.getItem(user);
+      if (value !== null) {
+        // We have data!!
+        console.log(value);
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log(error);
+    }
+  };
 
   saveData = () => {
     this.setState({ loading: true, disabled: true }, () => {
@@ -34,7 +58,9 @@ export default class Login extends React.Component {
               this.setState({response:"Wrong username/email or password!"});
             }
             else{
-              console.log(responseJson);
+              //console.log(responseJson);
+              this._storeData(responseJson);
+              this._retrieveData('user');
               this.props.navigation.navigate('Home');
             }
         }).catch((error) => {

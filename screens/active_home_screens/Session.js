@@ -13,7 +13,7 @@ export default class Session extends React.Component{
         
         this.state = {
           amount: " 12.60",
-          sessionStartTime: new Date("2019-12-13T00:08:00Z"),
+          sessionStartTime: new Date("2019-12-16T00:08:00Z"),
           stopwatchStartTime: 0,
           value: true,
         };
@@ -55,7 +55,7 @@ export default class Session extends React.Component{
 
         return(
             <View style={styles.container}>
-                <View style={{alignSelf:'stretch', marginTop:50}}>
+                <View style={{alignSelf:'stretch', marginTop:30}}>
                     <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginLeft:10, width:50, height:50,
                         borderRadius:25, backgroundColor:theme.COLORS.JAPANESE_INDIGO}} 
                         onPress= {() => this.props.navigation.toggleDrawer()}>
