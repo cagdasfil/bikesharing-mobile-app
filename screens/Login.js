@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, View, Image, Button } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Image } from 'react-native';
 import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';

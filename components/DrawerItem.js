@@ -20,6 +20,42 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
           />
         );
+        case "UsageHistory":
+        return (
+          <Ionicons
+            name="md-bicycle"
+            family="ArgonExtra"
+            size={22}
+            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
+          />
+        );
+        case "Notifications":
+        return (
+          <Ionicons
+            name="md-notifications"
+            family="ArgonExtra"
+            size={22}
+            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
+          />
+        );
+        case "Report":
+        return (
+          <Ionicons
+            name="md-alert"
+            family="ArgonExtra"
+            size={22}
+            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
+          />
+        );
+        case "Settings":
+        return (
+          <Ionicons
+            name="md-settings"
+            family="ArgonExtra"
+            size={22}
+            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
+          />
+        );
       default:
         return null;
     }

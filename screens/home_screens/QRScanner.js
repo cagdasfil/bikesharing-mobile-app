@@ -37,14 +37,31 @@ export default class QRScanner extends React.Component {
         },
         body: JSON.stringify({
             qrCode : this.state.qrCode,
-            userId : "5de53b46913bba38ecc6bc5a",//this.state.userId,
+            userId : "5de40e78d8b373149471f969",//this.state.userId,
             dockerId : "5deb049a00e8d72bd4fe78cf" //this.state.lastDockerId
         })
       }).then((response) => response.json()).then((responseJson) => {
             this.setState({ loading: false, disabled: false });
-            if ( "error" in responseJson ){
-              alert("QR code is not recognized!");
-              console.log(responseJson);
+            if(responseJson.errorCode===-101){
+              alert("Invalid QR Code!");
+            }
+            else if(responseJson.errorCode===-102){
+              alert("The bike is already in use!");
+            }
+            else if(responseJson.errorCode===-103){
+              alert("You already have a bike!");
+            }
+            else if(responseJson.errorCode===-104){
+              alert("There is no such a user!");
+            }
+            else if(responseJson.errorCode===-105){
+              alert(responseJson.message);
+            }
+            else if(responseJson.errorCode===-106){
+              alert("User balance under 10 tl!");
+            }
+            else if(responseJson.errorCode===-100){
+              alert(responseJson.message);
             }
             else{
               console.log(responseJson.status);
