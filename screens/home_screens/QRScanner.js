@@ -21,6 +21,7 @@ export default class QRScanner extends React.Component {
     super();
     this.state = {  qrCode: "",
                     userId: "",
+                    dockerId:"",
                     loading: false,
                     disabled: false 
                   }
@@ -36,7 +37,8 @@ export default class QRScanner extends React.Component {
         },
         body: JSON.stringify({
             qrCode : this.state.qrCode,
-            userId : "5de53b46913bba38ecc6bc5a"//this.state.userId,
+            userId : "5de53b46913bba38ecc6bc5a",//this.state.userId,
+            dockerId : "5deb049a00e8d72bd4fe78cf" //this.state.lastDockerId
         })
       }).then((response) => response.json()).then((responseJson) => {
             this.setState({ loading: false, disabled: false });

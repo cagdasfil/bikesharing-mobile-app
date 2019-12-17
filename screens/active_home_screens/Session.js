@@ -12,12 +12,44 @@ export default class Session extends React.Component{
         
         this.state = {
           amount: "",
+          userId:"",
+          dockerId:"",
           sessionStartTime: new Date("2019/12/09"),
           stopwatchStartTime: 0,
+
         };
         
         this.getAmount = this.getAmount.bind(this);
     }
+
+    endSession = () => {
+        this.setState({ loading: true, disabled: true }, () => {
+          fetch('http://35.234.156.204/usages/endSession', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                userId : "5de53b46913bba38ecc6bc5a",//this.state.userId,
+                dockerId : "5defe5061f11c212b835d023" //this.state.lastDockerId
+            })
+          }).then((response) => response.json()).then((responseJson) => {
+                this.setState({ loading: false, disabled: false });
+                if ( "error" in responseJson ){
+                  alert("There is an error with endSession");
+                  console.log(responseJson);
+                }
+                else{
+                  console.log(responseJson.message);
+                  this.props.navigation.navigate('Session');
+                }
+            }).catch((error) => {
+                console.error(error);
+                this.setState({ loading: false, disabled: false });
+              });
+        });
+      }
     
     getAmount() {
     
@@ -93,7 +125,7 @@ export default class Session extends React.Component{
                                 margin: 10,
                                 borderRadius: 5,
                                 borderWidth: 2
-                            }}
+                            }} onPress = {()=> this.endSession()}
                         >
                             <Text>END SESSION</Text>
                         </TouchableOpacity>
