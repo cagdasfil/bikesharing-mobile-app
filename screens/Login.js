@@ -20,19 +20,18 @@ export default class Login extends React.Component {
 
   _storeData = async (user) => {
     try {
-      await AsyncStorage.setItem('user', user);
+      await AsyncStorage.setItem("user", user);
     } catch (error) {
       // Error saving data
-      console.log(user);
+      console.log(error);
     }
   };
 
-  _retrieveData = async (user) => {
+  _retrieveData = async (data) => { // takes string input
     try {
-      const value = await AsyncStorage.getItem(user);
-      if (value !== null) {
-        // We have data!!
-        console.log(value);
+      const value = await AsyncStorage.getItem(data);
+      if (value != null){
+        return value;
       }
     } catch (error) {
       // Error retrieving data
@@ -58,9 +57,7 @@ export default class Login extends React.Component {
               this.setState({response:"Wrong username/email or password!"});
             }
             else{
-              //console.log(responseJson);
-              this._storeData(responseJson);
-              this._retrieveData('user');
+              this._storeData(JSON.stringify(responseJson));
               this.props.navigation.navigate('Home');
             }
         }).catch((error) => {
@@ -68,6 +65,13 @@ export default class Login extends React.Component {
             this.setState({ loading: false, disabled: false });
           });
     });
+  }
+
+  async componentWillMount(){
+    user = await this._retrieveData('user');
+    if(user != null){
+      this.props.navigation.navigate('Home');
+    }
   }
 
   render(){

@@ -2,6 +2,7 @@ import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import theme from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
+import {AsyncStorage} from 'react-native';
 
 
 export default class Balance extends React.Component{
@@ -13,8 +14,64 @@ export default class Balance extends React.Component{
         };
     }
 
-    componentWillMount () {
-        this.state.balance = 27.50;
+    saveData = () => {
+        this.setState({ loading: true, disabled: true }, () => {
+          fetch('http://35.234.156.204/auth/local', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                identifier : "cagdas",//this.state.identifier,
+                password : "Cgds1996"//this.state.password
+            })
+          }).then((response) => response.json()).then((responseJson) => {
+                this.setState({ loading: false, disabled: false });
+                if ( "error" in responseJson ){
+                  this.setState({response:"Wrong username/email or password!"});
+                }
+                else{
+                  //console.log(responseJson);
+                  this._storeData(responseJson);
+                  //this.props.navigation.navigate('Home');
+                }
+            }).catch((error) => {
+                console.error(error);
+                this.setState({ loading: false, disabled: false });
+              });
+        });
+      }
+
+    _storeData = async (user) => {
+        try {
+          await AsyncStorage.setItem('user', user);
+        } catch (error) {
+          // Error saving data
+          console.log(error);
+        }
+      };
+    
+      _retrieveData = async (data) => { // takes string input
+        try {
+          const value = await AsyncStorage.getItem(data);
+          return value;
+        } catch (error) {
+          // Error retrieving data
+          console.log(error);
+        }
+      };
+
+    async componentWillMount () {
+        //this.saveData();
+        user = await this._retrieveData('user');
+        if(user != null){
+            userjson = JSON.parse(user);
+            this.setState({balance:userjson.user.balance});
+        }
+        else{
+            this.state.balance = -0.01;
+        }
     }
 
     render () {
@@ -32,15 +89,35 @@ export default class Balance extends React.Component{
                         <Text style={styles.balanceText}>
                             Balance:
                         </Text>
-                        <Text style={styles.amount}>
+                        <Text style={{fontSize:56, color:this.state.balance>=0? theme.COLORS.JAPANESE_INDIGO : 'red'}}>
                             {this.state.balance.toFixed(2)} ₺
                         </Text>
                     </View>
-                    <TouchableOpacity style={styles.buttons}>
-                        <Text style={styles.buttonText}>ADD MONEY</Text>
+                    <TouchableOpacity style={{flexDirection:'row'}}>
+                        <View style={{alignItems:'center',
+                                        justifyContent:'center',
+                                        width:40, 
+                                        height:40, 
+                                        marginBottom:20,
+                                        backgroundColor:theme.COLORS.JAPANESE_INDIGO}}>
+                            <Ionicons name="md-add-circle-outline" style={{color:theme.COLORS.SEASHELL}} size={28} />
+                        </View>
+                        <View style={styles.buttons}>
+                            <Text style={styles.buttonText}>ADD MONEY</Text>
+                        </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttons}>
-                        <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
+                    <TouchableOpacity style={{flexDirection:'row'}}>
+                        <View style={{alignItems:'center',
+                                        justifyContent:'center',
+                                        width:40, 
+                                        height:40, 
+                                        marginBottom:20,
+                                        backgroundColor:theme.COLORS.JAPANESE_INDIGO}}>
+                            <Ionicons name="md-remove-circle-outline" style={{color:theme.COLORS.SEASHELL}} size={28} />
+                        </View>
+                        <View style={styles.buttons}>
+                            <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -73,24 +150,19 @@ const styles = StyleSheet.create({
         fontSize:28,
         color: theme.COLORS.JAPANESE_INDIGO,
     },
-    amount:{
-        fontSize:56,
-        color: theme.COLORS.JAPANESE_INDIGO,
-    },
     buttons:{
         alignItems:'center', 
         justifyContent:'center',
-        width:240, 
+        flexDirection: 'row',
+        width:220, 
         height:40, 
-        marginBottom:20, 
-        //borderWidth:1,
-        //borderRadius:3,
-        borderColor: theme.COLORS.JAPANESE_INDIGO,
+        marginBottom:20,
         backgroundColor: theme.COLORS.JAPANESE_INDIGO, 
     },
     buttonText:{
         fontSize: 16,
         fontWeight: '400',
+        marginRight: 20,
         color: theme.COLORS.SEASHELL,
     }
 });
