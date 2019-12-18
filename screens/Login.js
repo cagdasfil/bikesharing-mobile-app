@@ -70,7 +70,7 @@ export default class Login extends React.Component {
   async componentWillMount(){
     user = await this._retrieveData('user');
     if(user != null){
-      this.props.navigation.navigate('Home');
+      //this.props.navigation.navigate('Home');
     }
   }
 

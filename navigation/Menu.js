@@ -11,7 +11,7 @@ import {
 import { theme } from "galio-framework";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from '@expo/vector-icons';
-import {AsyncStorage, BackHandler} from 'react-native';
+import { AsyncStorage, BackHandler } from 'react-native';
 
 
 

@@ -63,7 +63,7 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
   const HomeStack = createBottomTabNavigator(
     {
       Balance: {screen: Balance}, //navigationOptions:{tabBarLabel: ()=>{ return <View style={{backgroundColor:'red', flex:1}}><Text>asd</Text></View> }}},
-      scan: {screen: QRScanner},
+      Scan: {screen: QRScanner},
       Dockers: {screen: Dockers}
     },
     {
@@ -76,7 +76,7 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
             iconName = 'md-wallet';
             size = 40;
           }
-          else if (routeName === 'scan') {
+          else if (routeName === 'Scan') {
             iconName = 'md-qr-scanner';
             size = 40;
           }
@@ -100,6 +100,7 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
   
   const SessionStack = createBottomTabNavigator(
     {
+      Balance: {screen: Balance},
       Session: {screen: Session},
       Dockers: {screen: Dockers}
     },
@@ -109,7 +110,11 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
           const { routeName } = navigation.state;
           let iconName;
           let size;
-          if (routeName === 'Session') {
+          if (routeName === 'Balance') {
+            iconName = 'md-wallet';
+            size = 40;
+          }
+          else if (routeName === 'Session') {
             iconName = 'md-time';
             size = 40;
           }
@@ -128,6 +133,7 @@ const transitionConfig = (transitionProps, prevTransitionProps) => ({
         inactiveTintColor: theme.COLORS.JAPANESE_INDIGO,
         style: {height:80, borderTopColor:theme.COLORS.SEASHELL, backgroundColor:theme.COLORS.SEASHELL},
       },
+      initialRouteName: "Session"
     }
   );
 
