@@ -12,24 +12,24 @@ export default class Login extends React.Component {
     super();
     this.state = {  identifier: "", 
                     password: "",
-                    response:" ",
+                    responseMessage:" ",
                     loading: false,
                     disabled: false 
                   }
   }
 
-  _storeData = async (user) => {
+  _storeData = async (dataContainer, data) => { //both parameters are string.
     try {
-      await AsyncStorage.setItem("user", user);
+      await AsyncStorage.setItem(dataContainer, data);
     } catch (error) {
       // Error saving data
       console.log(error);
     }
   };
 
-  _retrieveData = async (data) => { // takes string input
+  _retrieveData = async (dataContainer) => { // takes string input
     try {
-      const value = await AsyncStorage.getItem(data);
+      const value = await AsyncStorage.getItem(dataContainer);
       if (value != null){
         return value;
       }
@@ -54,10 +54,10 @@ export default class Login extends React.Component {
       }).then((response) => response.json()).then((responseJson) => {
             this.setState({ loading: false, disabled: false });
             if ( "error" in responseJson ){
-              this.setState({response:"Wrong username/email or password!"});
+              this.setState({responseMessage:"Wrong username/email or password!"});
             }
             else{
-              this._storeData(JSON.stringify(responseJson));
+              this._storeData("user", JSON.stringify(responseJson));
               this.props.navigation.navigate('Home');
             }
         }).catch((error) => {
@@ -66,11 +66,11 @@ export default class Login extends React.Component {
           });
     });
   }
-
-  async componentWillMount(){
+  
+  async componentDidMount(){
     user = await this._retrieveData('user');
     if(user != null){
-      //this.props.navigation.navigate('Home');
+      this.props.navigation.navigate('Home');
     }
   }
 
@@ -80,7 +80,7 @@ export default class Login extends React.Component {
         <Image
           style={{width:300, height:60, marginBottom:40, marginTop:70}}
           source={require("../assets/images/logo.png")} />
-        <Text style={{color:'red', marginBottom:5}}>{this.state.response}</Text>
+        <Text style={{color:'red', marginBottom:5}}>{this.state.responseMessage}</Text>
         <View style={{flexDirection:'row', alignItems:'center', marginBottom:10,}}>
           <View style={{alignItems:'center', justifyContent:'center', backgroundColor:theme.COLORS.DIAMOND, width:40, height:40}}>
             <Ionicons name='md-person' size={26} color={theme.COLORS.JAPANESE_INDIGO}/>

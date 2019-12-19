@@ -16,8 +16,6 @@ import { AsyncStorage, BackHandler } from 'react-native';
 
 
 const exit = async () => {
-  console.log(await AsyncStorage.getItem('user'));
-  await AsyncStorage.removeItem('user');
   await AsyncStorage.clear()
   BackHandler.exitApp();
 }
@@ -65,7 +63,7 @@ const Menu = {
       alignContent: "center",
       alignItems: "center",
       overflow: "hidden"
-    }
+    },
   }
 };
 
@@ -74,8 +72,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    //paddingHorizontal: 28,
-    //paddingBottom: theme.SIZES.BASE,
     marginTop: theme.SIZES.BASE * 8,
     marginBottom: theme.SIZES.BASE * 5,
     justifyContent: 'center',

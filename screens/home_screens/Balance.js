@@ -39,14 +39,16 @@ export default class Balance extends React.Component{
                 }
                 else{
                   alert("Add Money Operation Successful");
+                  this.setState({balance : responseJson.data.newBalance});
+                  this.state.userjson.user.balance = responseJson.data.newBalance;
+                  this._storeData("user",JSON.stringify(this.state.userjson));
+                  this.props.navigation.navigate('Home');
                 }
             }).catch((error) => {
                 console.error(error);
                 this.setState({ loading: false, disabled: false });
               });
         });
-
-        await this.getUser();
       }
     
     withDrawMoney = async () => {
@@ -74,38 +76,10 @@ export default class Balance extends React.Component{
                 }
                 else{
                   alert('Withdraw Money Operation Successful!');
-                }
-            }).catch((error) => {
-                console.error(error);
-                this.setState({ loading: false, disabled: false });
-              });
-        });
-        await this.getUser();
-      }
-
-
-    getUser = async () => {
-        this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/auth/local', {
-            method: 'POST',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                identifier : this.state.userjson.username,
-                password : "Cgds1996"//this.state.password
-            })
-          }).then((response) => response.json()).then( async (responseJson) => {
-                this.setState({ loading: false, disabled: false });
-                if ( "error" in responseJson ){
-                  this.setState({response:"Wrong username/email or password!"});
-                }
-                else{
-                  //console.log(responseJson);
-                  await this._storeData(JSON.stringify(responseJson));
-                  await this.componentWillMount();
-                  //this.props.navigation.navigate('Home');
+                  this.setState({balance : responseJson.data.newBalance});
+                  this.state.userjson.user.balance = responseJson.data.newBalance;
+                  this._storeData("user",JSON.stringify(this.state.userjson));
+                  this.props.navigation.navigate('Home');
                 }
             }).catch((error) => {
                 console.error(error);
@@ -114,27 +88,28 @@ export default class Balance extends React.Component{
         });
       }
 
-    _storeData = async (user) => {
+      _storeData = async (dataContainer, data) => { //both parameters are string.
         try {
-          await AsyncStorage.setItem('user', user);
+          await AsyncStorage.setItem(dataContainer, data);
         } catch (error) {
           // Error saving data
           console.log(error);
         }
       };
     
-      _retrieveData = async (data) => { // takes string input
+      _retrieveData = async (dataContainer) => { // takes string input
         try {
-          const value = await AsyncStorage.getItem(data);
-          return value;
+          const value = await AsyncStorage.getItem(dataContainer);
+          if (value != null){
+            return value;
+          }
         } catch (error) {
           // Error retrieving data
           console.log(error);
         }
       };
 
-    async componentWillMount () {
-        //this.saveData();
+    async componentDidMount () {
         user = await this._retrieveData('user');
         if(user != null){
             userjsoned = JSON.parse(user);
