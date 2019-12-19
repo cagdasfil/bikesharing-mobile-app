@@ -2,18 +2,53 @@ import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import theme from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
+import {AsyncStorage} from 'react-native';
 
 
 export default class Balance extends React.Component{
 
-    constructor () {
-        super();
+    constructor (props) {
+        super(props);
         this.state={
             balance: 0,
-            userId: "",
+            userjson: null,
+            loading: false,
+            disabled: false 
         };
     }
-    addMoney = () => {
+    _storeData = async (user) => {
+      try {
+        await AsyncStorage.setItem('user', user);
+      } catch (error) {
+        // Error saving data
+        console.log(error);
+      }
+    };
+  
+    _retrieveData = async (data) => { // takes string input
+      try {
+        const value = await AsyncStorage.getItem(data);
+        return value;
+      } catch (error) {
+        // Error retrieving data
+        console.log(error);
+      }
+    };
+
+  async componentDidMount () {
+      //this.saveData();
+      user = await this._retrieveData('user');
+      if(user !== null){
+          userjsoned = JSON.parse(user);
+          this.setState({userjson:userjsoned})
+          this.setState({balance:userjsoned.user.balance});
+      }
+      else{
+          alert("User authentication failed.");
+          this.state.balance = -0.01;
+      }
+  }
+    addMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
           fetch('http://35.234.156.204/payments/addMoney', {
             method: 'POST',
@@ -22,8 +57,8 @@ export default class Balance extends React.Component{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                userId : "5de40e78d8b373149471f969",//this.state.userId,
-                amount : 20,
+                userId : this.state.userjson.user._id,
+                amount : 10,
             })
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });
@@ -34,7 +69,9 @@ export default class Balance extends React.Component{
                 alert(responseJson.message);
                 }
                 else{
-                  alert("Add Money Operation Successful");
+                  alert("Add Money Operation Successful!");
+                  this.setState({balance : responseJson.data.newBalance});
+                  this.props.navigation.navigate('Home');
                 }
             }).catch((error) => {
                 console.error(error);
@@ -42,7 +79,8 @@ export default class Balance extends React.Component{
               });
         });
       }
-    withDrawMoney = () => {
+    
+    withDrawMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
           fetch('http://35.234.156.204/payments/withdrawMoney', {
             method: 'POST',
@@ -51,8 +89,8 @@ export default class Balance extends React.Component{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                userId : "5de40e78d8b373149471f969",//this.state.userId,
-                amount : 20,
+                userId : this.state.userjson.user._id,
+                amount : 10,
             })
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });
@@ -67,6 +105,8 @@ export default class Balance extends React.Component{
                 }
                 else{
                   alert('Withdraw Money Operation Successful!');
+                  this.setState({balance : responseJson.data.newBalance});
+                  this.props.navigation.navigate('Home');
                 }
             }).catch((error) => {
                 console.error(error);
@@ -75,14 +115,12 @@ export default class Balance extends React.Component{
         });
       }
 
-    componentWillMount () {
-        this.state.balance = 27.50;
-    }
+    
 
     render () {
         return(
             <View style={styles.container}>
-                <View style={{alignSelf:'stretch', marginTop:50}}>
+                <View style={{alignSelf:'stretch', marginTop:30}}>
                     <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginLeft:10, width:50, height:50,
                         borderRadius:25, backgroundColor:theme.COLORS.JAPANESE_INDIGO}} 
                         onPress= {() => this.props.navigation.toggleDrawer()}>
@@ -94,15 +132,35 @@ export default class Balance extends React.Component{
                         <Text style={styles.balanceText}>
                             Balance:
                         </Text>
-                        <Text style={styles.amount}>
+                        <Text style={{fontSize:56, color:this.state.balance>=0? theme.COLORS.JAPANESE_INDIGO : 'red'}}>
                             {this.state.balance.toFixed(2)} ₺
                         </Text>
                     </View>
-                    <TouchableOpacity style={styles.buttons} onPress={() => this.addMoney()}>
-                        <Text style={styles.buttonText}>ADD MONEY</Text>
+                    <TouchableOpacity style={{flexDirection:'row'}} onPress={this.addMoney}>
+                        <View style={{alignItems:'center',
+                                        justifyContent:'center',
+                                        width:40, 
+                                        height:40, 
+                                        marginBottom:20,
+                                        backgroundColor:theme.COLORS.JAPANESE_INDIGO}}>
+                            <Ionicons name="md-add-circle-outline" style={{color:theme.COLORS.SEASHELL}} size={28} />
+                        </View>
+                        <View style={styles.buttons}>
+                            <Text style={styles.buttonText}>ADD MONEY</Text>
+                        </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.buttons} onPress={() => this.withDrawMoney()}>
-                        <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
+                    <TouchableOpacity style={{flexDirection:'row'}} onPress={this.withDrawMoney}>
+                        <View style={{alignItems:'center',
+                                        justifyContent:'center',
+                                        width:40, 
+                                        height:40, 
+                                        marginBottom:20,
+                                        backgroundColor:theme.COLORS.JAPANESE_INDIGO}}>
+                            <Ionicons name="md-remove-circle-outline" style={{color:theme.COLORS.SEASHELL}} size={28} />
+                        </View>
+                        <View style={styles.buttons}>
+                            <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -128,31 +186,26 @@ const styles = StyleSheet.create({
         width:250,
         height:250,
         borderRadius:125,
-        marginBottom:30,
+        marginBottom:80,
         backgroundColor: theme.COLORS.DIAMOND,
     },
     balanceText:{
         fontSize:28,
         color: theme.COLORS.JAPANESE_INDIGO,
     },
-    amount:{
-        fontSize:56,
-        color: theme.COLORS.JAPANESE_INDIGO,
-    },
     buttons:{
         alignItems:'center', 
         justifyContent:'center',
-        width:240, 
+        flexDirection: 'row',
+        width:220, 
         height:40, 
-        marginTop:30, 
-        //borderWidth:1,
-        //borderRadius:3,
-        borderColor: theme.COLORS.JAPANESE_INDIGO,
+        marginBottom:20,
         backgroundColor: theme.COLORS.JAPANESE_INDIGO, 
     },
     buttonText:{
         fontSize: 16,
         fontWeight: '400',
+        marginRight: 20,
         color: theme.COLORS.SEASHELL,
     }
 });

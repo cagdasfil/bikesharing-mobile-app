@@ -3,18 +3,41 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import theme from '../constants/Theme';
+import {AsyncStorage} from 'react-native';
+
 
 export default class Login extends React.Component {
 
-  constructor(){
-    super();
-    this.state = {  identifier: "", 
-                    password: "",
-                    response:" ",
+  constructor(props){
+    super(props);
+    this.state = {  identifier: '', 
+                    password: '',
+                    response: '',
                     loading: false,
                     disabled: false 
                   }
   }
+
+  _storeData = async (user) => {
+    try {
+      await AsyncStorage.setItem('user', user);
+    } catch (error) {
+      // Error saving data
+      console.log(error);
+    }
+  };
+
+  _retrieveData = async (data) => { // takes string input
+    try {
+      const value = await AsyncStorage.getItem(data);
+      if (value != null){
+        return value;
+      }
+    } catch (error) {
+      // Error retrieving data
+      console.log(error);
+    }
+  };
 
   saveData = () => {
     this.setState({ loading: true, disabled: true }, () => {
@@ -34,7 +57,7 @@ export default class Login extends React.Component {
               this.setState({response:"Wrong username/email or password!"});
             }
             else{
-              console.log(responseJson);
+              this._storeData(JSON.stringify(responseJson));
               this.props.navigation.navigate('Home');
             }
         }).catch((error) => {
@@ -42,6 +65,13 @@ export default class Login extends React.Component {
             this.setState({ loading: false, disabled: false });
           });
     });
+  }
+
+  async componentWillMount(){
+    user = await this._retrieveData('user');
+    if(user != null){
+      this.props.navigation.navigate('Home');
+    }
   }
 
   render(){

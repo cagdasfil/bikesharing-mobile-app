@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stopwatch } from 'react-native-stopwatch-timer';
 import theme from '../../constants/Theme';
 import ToggleSwitch from 'rn-toggle-switch'
+import {AsyncStorage} from 'react-native';
+
 
 export default class Session extends React.Component{
 
@@ -12,10 +14,11 @@ export default class Session extends React.Component{
         super(props);
         
         this.state = {
-          amount: " 12.60",
-          sessionStartTime: new Date("2019-12-13T00:08:00Z"),
-          stopwatchStartTime: 0,
+          amount: 12.60,
+          sessionStartTime: new Date(),
+          stopwatchStartTime: 100000,
           value: true,
+          sessionjson: null,
         };
         
         this.getAmount = this.getAmount.bind(this);
@@ -34,6 +37,50 @@ export default class Session extends React.Component{
             return datestring;
     }
 
+
+    saveData = () => {
+        this.setState({ loading: true, disabled: true }, () => {
+          fetch('http://35.234.156.204/usages/openSession/5de53b46913bba38ecc6bc5a', {
+            method: 'GET',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }
+          }).then((response) => response.json()).then( async (responseJson) => {
+                this.setState({ loading: false, disabled: false });
+                if ( "errorCode" in responseJson ){
+                  this.setState({response:"error"});
+                }
+                else{
+                    console.log(responseJson);
+                    await this._storeData(JSON.stringify(responseJson));
+                }
+            }).catch((error) => {
+                console.error(error);
+                this.setState({ loading: false, disabled: false });
+              });
+        });
+      }
+
+    _storeData = async (session) => {
+        try {
+          await AsyncStorage.setItem('session', session);
+        } catch (error) {
+          // Error saving data
+          console.log(error);
+        }
+      };
+    
+      _retrieveData = async (data) => { // takes string input
+        try {
+          const value = await AsyncStorage.getItem(data);
+          return value;
+        } catch (error) {
+          // Error retrieving data
+          console.log(error);
+        }
+      };
+
     endSession = () => {
         this.setState({ loading: true, disabled: true }, () => {
           fetch('http://35.234.156.204/usages/endSession', {
@@ -43,7 +90,7 @@ export default class Session extends React.Component{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                userId : "5de40e78d8b373149471f969",//this.state.userId,
+                userId : this.state.userjson.user._id,//this.state.userId,
                 dockerId : "5defe5061f11c212b835d023" //this.state.lastDockerId
             })
           }).then((response) => response.json()).then((responseJson) => {
@@ -57,6 +104,7 @@ export default class Session extends React.Component{
                 else{
                     alert(responseJson.message)
                     console.log(responseJson.message);
+                    this.props.navigation.navigate("Home");
                 }
             }).catch((error) => {
                 console.error(error);
@@ -64,29 +112,58 @@ export default class Session extends React.Component{
               });
         });
       }
+
     
     getAmount() {
-    
+        diff = new Date() - this.state.sessionStartTime;
+        diff = diff/60000.0;
+        totalPayment = 0;
+        if(diff>5){
+            totalPayment += 5.0
+        }
+        if(diff>60){
+            totalPayment += (diff-60)*0.1;
+        }
+        this.setState({amount:totalPayment});
     }
 
     toggleSwitch(isOn){
         return !isOn;
     }
 
-    componentWillMount() {
+    async componentWillMount() {
 
-        let diff = new Date() - this.state.sessionStartTime;
+        await this.saveData();
 
-        this.setState({stopwatchStartTime:diff});
+        session = await this._retrieveData("session");
+
+        sessionjson = JSON.parse(session);
+
+        sessionStartTime = new Date(sessionjson.data.createdAt);
+
+        diff = new Date() - sessionStartTime;
+
+        console.log("diff", diff);
+        
+        this.setState({stopwatchStartTime:diff, sessionStartTime:sessionStartTime});
 
         this.getAmount();
+
+        user = await this._retrieveData('user');
+        if(user != null){
+            userjsoned = JSON.parse(user);
+            this.setState({userjson:userjsoned})
+        }
+        else{
+            alert("User authentication failed.");
+        }
     }
 
     render () {
 
         return(
             <View style={styles.container}>
-                <View style={{alignSelf:'stretch', marginTop:50}}>
+                <View style={{alignSelf:'stretch', marginTop:30}}>
                     <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginLeft:10, width:50, height:50,
                         borderRadius:25, backgroundColor:theme.COLORS.JAPANESE_INDIGO}} 
                         onPress= {() => this.props.navigation.toggleDrawer()}>
@@ -111,7 +188,7 @@ export default class Session extends React.Component{
                             Total : 
                         </Text>
                         <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontSize:24}}>
-                            {this.state.amount} ₺
+                            {this.state.amount.toFixed(2)} ₺
                         </Text>
                     </View>
                 </View>
@@ -157,7 +234,7 @@ export default class Session extends React.Component{
                            flex:1,
                            height:60
                         }}
-                        onPress={() => this.endSession()}
+                        onPress = {this.endSession}
                     >
                         <Text style={{fontSize: 16, fontWeight: '400', color: theme.COLORS.SEASHELL,}}>END SESSION</Text>
                     </TouchableOpacity>

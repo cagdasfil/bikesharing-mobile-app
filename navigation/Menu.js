@@ -11,7 +11,16 @@ import {
 import { theme } from "galio-framework";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from '@expo/vector-icons';
+import { AsyncStorage, BackHandler } from 'react-native';
 
+
+
+const exit = async () => {
+  console.log(await AsyncStorage.getItem('user'));
+  await AsyncStorage.removeItem('user');
+  await AsyncStorage.clear()
+  BackHandler.exitApp();
+}
 
 const { width } = Dimensions.get("screen");
 
@@ -23,7 +32,7 @@ const Drawer = props => (
     <View flex={1}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         <DrawerItems {...props} />
-        <TouchableOpacity style={styles.exit}>
+        <TouchableOpacity style={styles.exit} onPress={exit}>
           <Text style={{fontSize:16, marginRight:5}}>EXIT</Text>
           <Ionicons name="md-exit" size={24} />
         </TouchableOpacity>
