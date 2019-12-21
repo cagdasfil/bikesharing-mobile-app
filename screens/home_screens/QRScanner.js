@@ -77,9 +77,11 @@ export default class QRScanner extends React.Component {
         else if(responseJson.errorCode===-100){
           alert(responseJson.message);
         }
-        else{
-          console.log(responseJson.status);
+        else if(responseJson.status === 200){
           this.props.navigation.navigate('Session');
+        }
+        else{
+          alert(responseJson.message);
         }
         }).catch((error) => {
             console.error(error);
