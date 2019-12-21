@@ -14,16 +14,13 @@ export default class Session extends React.Component{
         super(props);
         
         this.state = {
-          amount: 12.60,
+          amount: 0,
           sessionStartTime: new Date(),
-          stopwatchStartTime: 100000,
-          value: true,
+          stopwatchStartTime: 0,
+          stopwatchStart: false,
           sessionjson: null,
+          userjson: null,
         };
-        
-        this.getAmount = this.getAmount.bind(this);
-        this.toggleSwitch = this.toggleSwitch.bind(this);
-        this.formatDate = this.formatDate.bind(this);
     }
 
     formatDate (date) {
@@ -37,10 +34,28 @@ export default class Session extends React.Component{
             return datestring;
     }
 
+    _storeData = async (dataContainer, data) => { //both parameters are string.
+        try {
+          await AsyncStorage.setItem(dataContainer, data);
+        } catch (error) {
+          // Error saving data
+          console.log(error);
+        }
+      };
 
-    saveData = () => {
+      _retrieveData = async (dataContainer) => { // takes string input
+        try {
+          const value = await AsyncStorage.getItem(dataContainer);
+          return value;
+        } catch (error) {
+          // Error retrieving data
+          console.log(error);
+        }
+      };
+
+      getSessionStartTime = () => {
         this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/usages/openSession/5de53b46913bba38ecc6bc5a', {
+          fetch('http://35.234.156.204/usages/openSession/' + this.state.userjson.user._id, {
             method: 'GET',
             headers: {
                 Accept: 'application/json',
@@ -48,12 +63,14 @@ export default class Session extends React.Component{
             }
           }).then((response) => response.json()).then( async (responseJson) => {
                 this.setState({ loading: false, disabled: false });
-                if ( "errorCode" in responseJson ){
-                  this.setState({response:"error"});
+                if (responseJson.status != 200){
+                    alert(responseJson.message);
                 }
                 else{
                     console.log(responseJson);
-                    await this._storeData(JSON.stringify(responseJson));
+                    this.setState({sessionStartTime: new Date(responseJson.data.createdAt)});
+                    this.getAmount();
+                    await this._storeData("sessionStartTime",JSON.stringify(responseJson));
                 }
             }).catch((error) => {
                 console.error(error);
@@ -61,25 +78,6 @@ export default class Session extends React.Component{
               });
         });
       }
-
-    _storeData = async (session) => {
-        try {
-          await AsyncStorage.setItem('session', session);
-        } catch (error) {
-          // Error saving data
-          console.log(error);
-        }
-      };
-    
-      _retrieveData = async (data) => { // takes string input
-        try {
-          const value = await AsyncStorage.getItem(data);
-          return value;
-        } catch (error) {
-          // Error retrieving data
-          console.log(error);
-        }
-      };
 
     endSession = () => {
         this.setState({ loading: true, disabled: true }, () => {
@@ -104,6 +102,7 @@ export default class Session extends React.Component{
                 else{
                     alert(responseJson.message)
                     console.log(responseJson.message);
+                    AsyncStorage.removeItem('sessionStartTime');
                     this.props.navigation.navigate("Home");
                 }
             }).catch((error) => {
@@ -124,6 +123,9 @@ export default class Session extends React.Component{
         if(diff>60){
             totalPayment += (diff-60)*0.1;
         }
+        if(diff>1440){
+            totalPayment += (diff-1440)*0.4;
+        }
         this.setState({amount:totalPayment});
     }
 
@@ -131,25 +133,9 @@ export default class Session extends React.Component{
         return !isOn;
     }
 
-    async componentWillMount() {
-
-        await this.saveData();
-
-        session = await this._retrieveData("session");
-
-        sessionjson = JSON.parse(session);
-
-        sessionStartTime = new Date(sessionjson.data.createdAt);
-
-        diff = new Date() - sessionStartTime;
-
-        console.log("diff", diff);
-        
-        this.setState({stopwatchStartTime:diff, sessionStartTime:sessionStartTime});
-
-        this.getAmount();
-
+    async componentDidMount() {
         user = await this._retrieveData('user');
+        
         if(user != null){
             userjsoned = JSON.parse(user);
             this.setState({userjson:userjsoned})
@@ -157,6 +143,13 @@ export default class Session extends React.Component{
         else{
             alert("User authentication failed.");
         }
+
+        this.getSessionStartTime();
+        this.interval = setInterval(() => this.getAmount(), 10000); // amount reload every 10 secs.
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
     }
 
     render () {
@@ -179,7 +172,7 @@ export default class Session extends React.Component{
                             {this.formatDate(this.state.sessionStartTime)}
                         </Text>
                     </View>
-                    <Stopwatch laps secs start
+                    <Stopwatch start secs laps
                         startTime = {this.state.stopwatchStartTime}
                         options = {stopwatchOptions}
                     />
@@ -221,18 +214,8 @@ export default class Session extends React.Component{
                             alignItems:'center',
                             justifyContent:'center',
                             backgroundColor:theme.COLORS.JAPANESE_INDIGO,
-                            /*
-                            width: 240,
-                            height: 80,
-                            borderTopLeftRadius: 80,
-                            borderTopRightRadius: 80,
-                            paddingTop: 15
-                            
-                           flex:1,
-                           flexDirection:'row',
-                            */
-                           flex:1,
-                           height:60
+                            flex:1,
+                            height:60
                         }}
                         onPress = {this.endSession}
                     >

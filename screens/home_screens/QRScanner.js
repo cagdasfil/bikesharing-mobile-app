@@ -8,12 +8,6 @@ import {AsyncStorage} from 'react-native';
 
 export default class QRScanner extends React.Component {
 
-  static navigationOptions = {
-    drawerLabel: () => null,
-    drawerLockMode: 'locked-closed',
-  };
-
-
   constructor(){
     super();
     this.state = {  qrCode: "",

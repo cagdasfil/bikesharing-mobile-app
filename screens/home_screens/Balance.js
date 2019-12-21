@@ -1,8 +1,11 @@
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {TextInput, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import React from 'react';
 import theme from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import {AsyncStorage} from 'react-native';
+import RBSheet from "react-native-raw-bottom-sheet";
+import Dialog from 'react-native-dialog';
+import Modal from "react-native-modal";
 
 
 export default class Balance extends React.Component{
@@ -11,6 +14,14 @@ export default class Balance extends React.Component{
         super(props);
         this.state={
             balance: 0,
+            addMoney:0,
+            withdrawnMoney:0,
+            addMoneyResponse:null,
+            withdrawResponseMessage:null,
+            visible:false,
+            visible2: false,
+            check:false,
+            Successful:false,
             userjson: null,
             loading: false,
             disabled: false 
@@ -58,20 +69,29 @@ export default class Balance extends React.Component{
             },
             body: JSON.stringify({
                 userId : this.state.userjson.user._id,
-                amount : 10,
+                amount : Number(this.state.addMoney),
             })
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });
-                if(responseJson.errorCode===-201){
-                alert("There is no such a user!");
-                }
-                else if(responseJson.errorCode===-200){
-                alert(responseJson.message);
+                if(responseJson.status===200){
+                  this.setState({
+                    balance : responseJson.data.newBalance,
+                    visible:true,},
+                    
+                    );
+                    if(responseJson.data.withdrawedForDebt>0){
+                      this.setState({addMoneyResponse: "Successfully Added, " + String(responseJson.data.withdrawedForDebt)+ "₺ Stoppaged!"})
+                    }
+                    else{
+                      this.setState({addMoneyResponse: "Successfully Added."})
+                    }
+                  this.state.userjson.user.balance = responseJson.data.newBalance;
+                  this._storeData("user",JSON.stringify(this.state.userjson));
+                  this.props.navigation.navigate('Home');
                 }
                 else{
-                  alert("Add Money Operation Successful!");
-                  this.setState({balance : responseJson.data.newBalance});
-                  this.props.navigation.navigate('Home');
+                  alert(responseJson.message);
+                  
                 }
             }).catch((error) => {
                 console.error(error);
@@ -90,23 +110,22 @@ export default class Balance extends React.Component{
             },
             body: JSON.stringify({
                 userId : this.state.userjson.user._id,
-                amount : 10,
+                amount : this.state.withdrawnMoney,
             })
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });
-                if(responseJson.errorCode===-211){
-                alert("There is no such a user!");
-                }
-                else if(responseJson.errorCode===-212){
-                alert(responseJson.message);
-                }
-                else if(responseJson.errorCode===-210){
-                alert(responseJson.message);
+                if(responseJson.status===200){
+                  this.setState({withdrawResponseMessage: "Successfully withdrawn. " })
+                  this.setState({
+                    balance : responseJson.data.newBalance, Successful : true, visible2:true});
+                  this.state.userjson.user.balance = responseJson.data.newBalance;
+                  this._storeData("user",JSON.stringify(this.state.userjson));
+                  this.props.navigation.navigate('Home');
                 }
                 else{
-                  alert('Withdraw Money Operation Successful!');
-                  this.setState({balance : responseJson.data.newBalance});
-                  this.props.navigation.navigate('Home');
+                  this.setState({withdrawResponseMessage:responseJson.message})
+                  this.setState({
+                    Successful : false, visible2:true});
                 }
             }).catch((error) => {
                 console.error(error);
@@ -115,7 +134,39 @@ export default class Balance extends React.Component{
         });
       }
 
+      _storeData = async (dataContainer, data) => { //both parameters are string.
+        try {
+          await AsyncStorage.setItem(dataContainer, data);
+        } catch (error) {
+          // Error saving data
+          console.log(error);
+        }
+      };
     
+      _retrieveData = async (dataContainer) => { // takes string input
+        try {
+          const value = await AsyncStorage.getItem(dataContainer);
+          if (value != null){
+            return value;
+          }
+        } catch (error) {
+          // Error retrieving data
+          console.log(error);
+        }
+      };
+
+    async componentDidMount () {
+        user = await this._retrieveData('user');
+        if(user != null){
+            userjsoned = JSON.parse(user);
+            this.setState({userjson:userjsoned})
+            this.setState({balance:userjsoned.user.balance})
+        }
+        else{
+            alert("User authentication failed.");
+            this.state.balance = -0.01;
+        }
+    }
 
     render () {
         return(
@@ -136,7 +187,9 @@ export default class Balance extends React.Component{
                             {this.state.balance.toFixed(2)} ₺
                         </Text>
                     </View>
-                    <TouchableOpacity style={{flexDirection:'row'}} onPress={this.addMoney}>
+                    <TouchableOpacity style={{flexDirection:'row'}} onPress = {() => {
+                      this.RBSheet.open(), this.setState({ check: true });
+                    }} >
                         <View style={{alignItems:'center',
                                         justifyContent:'center',
                                         width:40, 
@@ -149,7 +202,11 @@ export default class Balance extends React.Component{
                             <Text style={styles.buttonText}>ADD MONEY</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{flexDirection:'row'}} onPress={this.withDrawMoney}>
+                    <TouchableOpacity 
+                      style={{flexDirection:'row'}} 
+                      onPress={() => {
+                        this.RBSheet.open(), this.setState({ check: false });
+                      }}>
                         <View style={{alignItems:'center',
                                         justifyContent:'center',
                                         width:40, 
@@ -162,7 +219,116 @@ export default class Balance extends React.Component{
                             <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
                         </View>
                     </TouchableOpacity>
+                    <RBSheet onClose = {() => this.setState({ visible: false, visible2: false })}
+                    ref={ref => {
+                        this.RBSheet = ref;
+                    }}
+                    height={200}
+                    duration={250}
+                    customStyles={{
+                        container: {
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }
+                    }}>
+                    {this.state.check ?
+                        <View>
+                            <View style={{justifyContent:'center', flexDirection:'row', alignItems:'center', marginTop:10,marginBottom:10}}>
+                                <TextInput
+                                style={{borderWidth:1,borderRadius:5,borderColor:theme.COLORS.JAPANESE_INDIGO, fontSize:30, textAlign:'center', height:40, width:200, backgroundColor:"#fff", color:theme.COLORS.JAPANESE_INDIGO}}
+                                onChangeText = {(text) => this.setState({ addMoney: text })}
+                                placeholder = "0.00₺"
+                                />
+                            </View>
+                            <View style={{marginBottom:30, flexDirection:'row'}}>
+                                <TouchableOpacity
+                                    style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
+                                    onPress={() => {this.addMoney()}}>
+                                    <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>OK</Text>
+                                    
+                                </TouchableOpacity>
+                                {this.state.visible ? 
+                                    <View style={{ alignItems:'center',justifyContent:'center'}} >
+                                        <Dialog.Container
+                                        onBackdropPress={() => {this.setState({ visible: false }),this.RBSheet.close()}} 
+                                        visible={this.state.visible}>
+                                                                                        
+                                                <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center',marginBottom:30}} >    
+                                                    <Ionicons name='md-checkmark-circle-outline' size={40} color='#24ab09'/>
+                                                    
+                                                    <Text style={{fontSize:20}}>{this.state.addMoneyResponse}</Text>
+                                                </View>
+                                            
+                                        </Dialog.Container>
+                                    </View>
+                                : null}
+                                <TouchableOpacity
+                                    style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
+                                    onPress={() => {
+                                        this.RBSheet.close();
+                                    }}>
+                                    <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>Cancel</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    :
+                        <View>
+                            <View style={{justifyContent:'center', flexDirection:'row', alignItems:'center', marginTop:10,marginBottom:10}}>
+                                <TextInput
+                                style={{borderWidth:1,borderRadius:5,borderColor:theme.COLORS.JAPANESE_INDIGO, fontSize:30, textAlign:'center', height:40, width:200, backgroundColor:"#fff", color:theme.COLORS.JAPANESE_INDIGO}}
+                                onChangeText = {(text) => this.setState({ withdrawnMoney: text })}
+                                placeholder = "0.00₺"
+                                />
+                            </View>
+                            <View style={{marginBottom:30, flexDirection:'row'}}>
+                                <TouchableOpacity
+                                    style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
+                                    onPress={() => {this.withDrawMoney() }}>
+                                    <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>OK</Text>
+                                    
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
+                                    onPress={() => {
+                                        this.RBSheet.close();
+                                    }}>
+                                    <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>Cancel</Text>
+                                </TouchableOpacity>
+                                {this.state.visible2 ?
+                                    <View>              
+                                    {this.state.Successful ? 
+                                        <View style={{ alignItems:'center',justifyContent:'center'}}>
+                                            <Dialog.Container
+                                            onBackdropPress={() => {this.setState({ visible2: false }),this.RBSheet.close()}} 
+                                            visible={this.state.visible2}>
+                                                    <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center',marginBottom:30}}>
+                                                        <Ionicons name='md-checkmark-circle-outline' size={40} color='#24ab09'/>
+                                                        <Text style={{fontSize:20}}>{this.state.withdrawResponseMessage}</Text>   
+                                                    </View>
+                                            </Dialog.Container>
+                                        </View>
+                                    :
+                                        <View style={{ alignItems:'center',justifyContent:'center'}}>
+                                            <Dialog.Container
+                                            onBackdropPress={() => {this.setState({ visible2: false }), this.RBSheet.close()}} 
+                                            visible={this.state.visible2}>
+                                                
+                                                    <View style={{flexDirection:'row', alignItems:'center',justifyContent:'center',marginBottom:30}} >
+                                                        <Ionicons name='md-close-circle-outline' size={40} color='#9e0303' />
+                                                        <Text style={{fontSize:20}}>{this.state.withdrawResponseMessage}</Text>   
+                                                    </View>
+                                            </Dialog.Container>   
+                                        </View>
+                                    }
+                                    </View> 
+                                : null}
+                            </View>
+                        </View>
+                    }
+                </RBSheet>
+
                 </View>
+
             </View>
         );
     }
@@ -193,6 +359,11 @@ const styles = StyleSheet.create({
         fontSize:28,
         color: theme.COLORS.JAPANESE_INDIGO,
     },
+    amount:{
+      fontSize:56,
+      color: theme.COLORS.JAPANESE_INDIGO,
+    },
+    
     buttons:{
         alignItems:'center', 
         justifyContent:'center',
