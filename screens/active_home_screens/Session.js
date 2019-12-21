@@ -53,32 +53,6 @@ export default class Session extends React.Component{
         }
       };
 
-      getSessionStartTime = () => {
-        this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/usages/openSession/' + this.state.userjson.user._id, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            }
-          }).then((response) => response.json()).then( async (responseJson) => {
-                this.setState({ loading: false, disabled: false });
-                if (responseJson.status != 200){
-                    alert(responseJson.message);
-                }
-                else{
-                    console.log(responseJson);
-                    this.setState({sessionStartTime: new Date(responseJson.data.createdAt)});
-                    this.getAmount();
-                    await this._storeData("sessionStartTime",JSON.stringify(responseJson));
-                }
-            }).catch((error) => {
-                console.error(error);
-                this.setState({ loading: false, disabled: false });
-              });
-        });
-      }
-
     endSession = () => {
         this.setState({ loading: true, disabled: true }, () => {
           fetch('http://35.234.156.204/usages/endSession', {

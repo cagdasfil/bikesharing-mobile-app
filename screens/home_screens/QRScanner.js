@@ -40,7 +40,33 @@ export default class QRScanner extends React.Component {
     }
   };
 
-
+  checkBikeAvailability = () => {
+    this.setState({ loading: true, disabled: true }, () => {
+      fetch('http://35.234.156.204/usages/startSession', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            qrCode : this.state.qrCode,
+            userId : this.state.userjson.user._id,
+            dockerId : "5deb049a00e8d72bd4fe78cf"
+        })
+      }).then((response) => response.json()).then((responseJson) => {
+        this.setState({ loading: false, disabled: false });
+        if(responseJson.status===200){
+          this.props.navigation.navigate('Session');
+        }
+        else{
+          alert(responseJson.message);
+        }
+        }).catch((error) => {
+            console.error(error);
+            this.setState({ loading: false, disabled: false });
+          });
+    });
+  }
   saveData = () => {
     this.setState({ loading: true, disabled: true }, () => {
       fetch('http://35.234.156.204/usages/startSession', {
@@ -56,30 +82,11 @@ export default class QRScanner extends React.Component {
         })
       }).then((response) => response.json()).then((responseJson) => {
         this.setState({ loading: false, disabled: false });
-        if(responseJson.errorCode===-101){
-          alert("Invalid QR Code!");
-        }
-        else if(responseJson.errorCode===-102){
-          alert("The bike is already in use!");
-        }
-        else if(responseJson.errorCode===-103){
-          alert("You already have a bike!");
-        }
-        else if(responseJson.errorCode===-104){
-          alert("There is no such a user!");
-        }
-        else if(responseJson.errorCode===-105){
-          alert(responseJson.message);
-        }
-        else if(responseJson.errorCode===-106){
-          alert("User balance under 10 tl!");
-        }
-        else if(responseJson.errorCode===-100){
-          alert(responseJson.message);
+        if(responseJson.status===200){
+          this.props.navigation.navigate('Session');
         }
         else{
-          console.log(responseJson.status);
-          this.props.navigation.navigate('Session');
+          alert(responseJson.message);
         }
         }).catch((error) => {
             console.error(error);
