@@ -13,8 +13,10 @@ export default class Login extends React.Component {
     this.state = {  identifier: "", 
                     password: "",
                     responseMessage:" ",
+                    userJson: null,
+                    session: null,
                     loading: false,
-                    disabled: false 
+                    disabled: false,
                   }
   }
 
@@ -39,7 +41,7 @@ export default class Login extends React.Component {
     }
   };
 
-  saveData = () => {
+  authUser = () => {
     this.setState({ loading: true, disabled: true }, () => {
       fetch('http://35.234.156.204/auth/local', {
         method: 'POST',
@@ -51,14 +53,16 @@ export default class Login extends React.Component {
             identifier : this.state.identifier,
             password : this.state.password
         })
-      }).then((response) => response.json()).then((responseJson) => {
+      }).then((response) => response.json()).then(async (responseJson) => {
             this.setState({ loading: false, disabled: false });
             if ( "error" in responseJson ){
               this.setState({responseMessage:"Wrong username/email or password!"});
             }
             else{
+              this.setState({userJson:responseJson});
               this._storeData("user", JSON.stringify(responseJson));
-              this.props.navigation.navigate('Home');
+              session = await this.getSession();
+              this.navigate(session);
             }
         }).catch((error) => {
             console.error(error);
@@ -66,6 +70,40 @@ export default class Login extends React.Component {
           });
     });
   }
+
+  navigate(session){
+    if(session == null ){
+      this.props.navigation.navigate('Home');
+    }
+    else{
+      this.props.navigation.navigate('Session');
+    }
+  }
+
+  getSession = async () => {
+    return new Promise((resolve) => {
+    this.setState({ loading: true, disabled: true }, async () => {
+      await fetch('http://35.234.156.204/usages/openSession/' + this.state.userJson.user._id, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        }
+      }).then((response) => response.json()).then(async (responseJson) => {
+            this.setState({ loading: false, disabled: false });
+            if ( responseJson.status === 200 ){
+              this._storeData("session", JSON.stringify(responseJson.data));
+              resolve(responseJson.data);
+            }
+            else{
+              resolve(null);
+            }
+        }).catch((error) => {
+            console.error(error);
+            this.setState({ loading: false, disabled: false });
+          });
+    });
+  })}
   
   async componentDidMount(){
     user = await this._retrieveData('user');
@@ -105,7 +143,7 @@ export default class Login extends React.Component {
         <View style={{flexDirection:'row'}}>
           <TouchableOpacity
             style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
-            onPress={ this.saveData /*this.props.navigation.navigate('Home')*/}
+            onPress={ this.authUser /*this.props.navigation.navigate('Home')*/}
           >
             <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>LOGIN</Text>
           </TouchableOpacity>

@@ -22,6 +22,16 @@ import ResetPassword from '../screens/ResetPassword';
 import Menu from "./Menu";
 import DrawerItem from "../components/DrawerItem";
 
+  _retrieveData = async (dataContainer) => { // takes string input
+    try {
+      const value = await AsyncStorage.getItem(dataContainer);
+      return value;
+    } catch (error) {
+      // Error retrieving data
+      console.log(error);
+    }
+  };
+
   const HomeStack = createBottomTabNavigator(
     {
       Balance: {screen: Balance},

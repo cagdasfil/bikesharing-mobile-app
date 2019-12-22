@@ -4,7 +4,7 @@ import * as Permissions from 'expo-permissions';
 import { BarCodeScanner } from 'expo-barcode-scanner';
 import theme from '../../constants/Theme';
 import {AsyncStorage} from 'react-native';
-
+import Dialog from 'react-native-dialog';
 
 export default class QRScanner extends React.Component {
 
@@ -13,11 +13,13 @@ export default class QRScanner extends React.Component {
     this.state = {  qrCode: "",
                     userId: "",
                     dockerId:"",
+                    bikeId: "",
                     userjson: null,
                     loading: false,
                     disabled: false,
                     hasCameraPermission: null,
                     scanned: false,
+                    visible:false,
                   }
   }
 
@@ -40,7 +42,28 @@ export default class QRScanner extends React.Component {
     }
   };
 
-
+  checkBikeAvailability = () => {
+    this.setState({ loading: true, disabled: true }, () => {
+      fetch('http://35.234.156.204/bikes/checkAvailability/'+this.state.qrCode, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        }
+      }).then((response) => response.json()).then((responseJson) => {
+        this.setState({ loading: false, disabled: false });
+        if(responseJson.status===200){
+          this.setState({bikeId:responseJson.data._id,visible:true});
+        }
+        else{
+          alert(responseJson.message);
+        }
+        }).catch((error) => {
+            console.error(error);
+            this.setState({ loading: false, disabled: false });
+          });
+    });
+  }
   saveData = () => {
     this.setState({ loading: true, disabled: true }, () => {
       fetch('http://35.234.156.204/usages/startSession', {
@@ -50,34 +73,13 @@ export default class QRScanner extends React.Component {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            qrCode : this.state.qrCode,
+            bikeId : this.state.bikeId,
             userId : this.state.userjson.user._id,
-            dockerId : "5deb049a00e8d72bd4fe78cf"
+            dockerId : "5deb049a00e8d72bd4fe78cf"//A1 DockerID
         })
       }).then((response) => response.json()).then((responseJson) => {
         this.setState({ loading: false, disabled: false });
-        if(responseJson.errorCode===-101){
-          alert("Invalid QR Code!");
-        }
-        else if(responseJson.errorCode===-102){
-          alert("The bike is already in use!");
-        }
-        else if(responseJson.errorCode===-103){
-          alert("You already have a bike!");
-        }
-        else if(responseJson.errorCode===-104){
-          alert("There is no such a user!");
-        }
-        else if(responseJson.errorCode===-105){
-          alert(responseJson.message);
-        }
-        else if(responseJson.errorCode===-106){
-          alert("User balance under 10 tl!");
-        }
-        else if(responseJson.errorCode===-100){
-          alert(responseJson.message);
-        }
-        else if(responseJson.status === 200){
+        if(responseJson.status===200){
           this.props.navigation.navigate('Session');
         }
         else{
@@ -134,7 +136,15 @@ export default class QRScanner extends React.Component {
           onBarCodeScanned={scanned ? undefined : this.handleBarCodeScanned}
           style={StyleSheet.absoluteFillObject}
         />
-
+        <View>
+            <Dialog.Container
+              onBackdropPress={() => {this.setState({ visible: false })}} 
+              visible={this.state.visible}>
+              <Dialog.Title>Baslasin mi</Dialog.Title>  
+              <Dialog.Button label="OK" onPress={() => {this.saveData();this.setState({ visible: false })}} />
+              <Dialog.Button label="Cancel" onPress={() => this.setState({ visible: false })} />
+            </Dialog.Container>
+          </View>
         {scanned && (
           <Button title={'Tap to Scan Again'} onPress={() => this.setState({ scanned: false })} />
         )}
@@ -144,7 +154,7 @@ export default class QRScanner extends React.Component {
 
   handleBarCodeScanned = ({ type, data }) => {
     this.setState({ scanned: true, qrCode: data });
-    this.saveData();
+    this.checkBikeAvailability();
     //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
   };
 }

@@ -6,7 +6,6 @@ import theme from '../../constants/Theme';
 import ToggleSwitch from 'rn-toggle-switch'
 import {AsyncStorage} from 'react-native';
 
-
 export default class Session extends React.Component{
 
     constructor(props) {
@@ -20,6 +19,7 @@ export default class Session extends React.Component{
           stopwatchStart: false,
           sessionjson: null,
           userjson: null,
+          isLocked: true,
         };
     }
 
@@ -67,7 +67,6 @@ export default class Session extends React.Component{
                     alert(responseJson.message);
                 }
                 else{
-                    console.log(responseJson);
                     this.setState({sessionStartTime: new Date(responseJson.data.createdAt)});
                     this.getAmount();
                     await this._storeData("sessionStartTime",JSON.stringify(responseJson));
@@ -112,8 +111,37 @@ export default class Session extends React.Component{
         });
       }
 
+      async getLockStatus(){
+        return new Promise( (resolve) => {
+        this.setState({ loading: true, disabled: true }, () => {
+            fetch('http://35.234.156.204/bikes/' + this.state.sessionjson.bikeId, {
+              method: 'GET',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+              }
+            }).then((response) => response.json()).then( async (responseJson) => {
+                  this.setState({ loading: false, disabled: false });
+                  
+                  if ("error" in responseJson){
+                    alert(responseJson.message);
+                  }
+                  else{
+                      //this.setState({isLocked:responseJson.isLocked});
+                     
+                      resolve(responseJson.isLocked);
+                  }
+              }).catch((error) => {
+                  console.error(error);
+                  this.setState({ loading: false, disabled: false });
+                });
+          });
+        })
+      }
+
       changeLockState(){
         this.setState({ loading: true, disabled: true }, () => {
+            console.log(this.state.sessionjson.bikeId);
             fetch('http://35.234.156.204/bikes/changeLockState', {
               method: 'POST',
               headers: {
@@ -121,7 +149,7 @@ export default class Session extends React.Component{
                   'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                  bikeId : "5dfe0609f143543590b07f26",//this.state.userId,
+                  bikeId : this.state.sessionjson.bikeId,//this.state.userId,
               })
             }).then((response) => response.json()).then((responseJson) => {
                   this.setState({ loading: false, disabled: false });
@@ -154,29 +182,37 @@ export default class Session extends React.Component{
         this.setState({amount:totalPayment});
     }
 
+    /*
     toggleSwitch(isOn){
         return !isOn;
     }
+    */
 
-    async componentDidMount() {
+    async componentWillMount() {
         user = await this._retrieveData('user');
-        
+        session = await this._retrieveData('session');
         if(user != null){
             userjsoned = JSON.parse(user);
             this.setState({userjson:userjsoned})
+            sessionjsoned = JSON.parse(session);
+            this.setState({sessionjson:sessionjsoned})
         }
         else{
             alert("User authentication failed.");
         }
 
+        isLockedtemp = await this.getLockStatus();
+        this.setState({isLocked:isLockedtemp});
+        //console.log(this.state.isLocked);
         this.getSessionStartTime();
-        this.interval = setInterval(() => this.getAmount(), 10000); // amount reload every 10 secs.
+        this.interval = setInterval(() => {this.getAmount(), this.getLockStatus()}, 10000); // amount reload every 10 secs.
     }
 
     componentWillUnmount() {
         clearInterval(this.interval);
     }
 
+    
     render () {
 
         return(
@@ -223,7 +259,7 @@ export default class Session extends React.Component{
                                  inactive:  'tomato', 
                                  activeBorder: theme.COLORS.SEASHELL, 
                                  inactiveBorder: theme.COLORS.SEASHELL}}
-                        active={false}
+                        active={this.state.isLocked}
                         disabled={false}
                         width={150}
                         radius={35}

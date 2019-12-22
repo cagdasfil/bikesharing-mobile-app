@@ -24,23 +24,11 @@ export default class Balance extends React.Component{
             Successful:false,
             userjson: null,
             loading: false,
-            disabled: false 
+            disabled: false ,
+            numberValid: false
         };
     }
 
-  async componentDidMount () {
-      //this.saveData();
-      user = await this._retrieveData('user');
-      if(user !== null){
-          userjsoned = JSON.parse(user);
-          this.setState({userjson:userjsoned})
-          this.setState({balance:userjsoned.user.balance});
-      }
-      else{
-          alert("User authentication failed.");
-          this.state.balance = -0.01;
-      }
-  }
     addMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
           fetch('http://35.234.156.204/payments/addMoney', {
@@ -58,7 +46,7 @@ export default class Balance extends React.Component{
                 if(responseJson.status===200){
                   this.setState({
                     balance : responseJson.data.newBalance,
-                    visible:true,},
+                    visible:true, numberValid: false},
                     
                     );
                     if(responseJson.data.withdrawedForDebt>0){
@@ -69,7 +57,7 @@ export default class Balance extends React.Component{
                     }
                   this.state.userjson.user.balance = responseJson.data.newBalance;
                   this._storeData("user",JSON.stringify(this.state.userjson));
-                  this.props.navigation.navigate('Balance2');
+                  this.props.navigation.navigate('Home');
                 }
                 else{
                   alert(responseJson.message);
@@ -97,12 +85,12 @@ export default class Balance extends React.Component{
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });
                 if(responseJson.status===200){
-                  this.setState({withdrawResponseMessage: "Successfully withdrawn. " })
+                  this.setState({withdrawResponseMessage: "Successfully withdrawn. ", numberValid: false})
                   this.setState({
                     balance : responseJson.data.newBalance, Successful : true, visible2:true});
                   this.state.userjson.user.balance = responseJson.data.newBalance;
                   this._storeData("user",JSON.stringify(this.state.userjson));
-                  this.props.navigation.navigate('Balance2');
+                  this.props.navigation.navigate('Home');
                 }
                 else{
                   this.setState({withdrawResponseMessage:responseJson.message})
@@ -149,6 +137,59 @@ export default class Balance extends React.Component{
             this.state.balance = -0.01;
         }
     }
+
+    validate(text, type){
+
+      number=/^\d+(,\d{2})?$/
+
+      var values = text.split(",")
+      var v1 = parseFloat(values[0])
+      var v2 = parseFloat(values[1])
+
+      if(!v1 && !v2){
+        this.setState({
+          numberValid:false,
+        })
+      }
+
+  
+      else if(type==='addedNumber'){
+        if(number.test(text))
+        {
+          this.setState({
+            numberValid:true,
+            addMoney: text.replace(",", "."),
+          })
+
+          
+          
+        }
+        else
+        {
+          this.setState({
+            numberValid:false,
+          })
+        }
+  
+      }
+      else if(type==='withDrawnNumber' ){
+        if(number.test(text))
+        {
+          this.setState({
+            numberValid:true,
+            withdrawnMoney: text.replace(",", "."),
+          })
+        }
+        else
+        {
+          this.setState({
+            numberValid:false,
+          })
+        }
+      }
+  
+      
+    }  
 
     render () {
         return(
@@ -201,7 +242,7 @@ export default class Balance extends React.Component{
                             <Text style={styles.buttonText}>WITHDRAW MONEY</Text>
                         </View>
                     </TouchableOpacity>
-                    <RBSheet onClose = {() => this.setState({ visible: false, visible2: false, addMoney:0 })}
+                    <RBSheet onClose = {() => this.setState({ visible: false, visible2: false })}
                     ref={ref => {
                         this.RBSheet = ref;
                     }}
@@ -217,15 +258,17 @@ export default class Balance extends React.Component{
                         <View>
                             <View style={{justifyContent:'center', flexDirection:'row', alignItems:'center', marginTop:10,marginBottom:10}}>
                                 <TextInput
+        
+                                keyboardType='numeric'
                                 style={{borderWidth:1,borderRadius:5,borderColor:theme.COLORS.JAPANESE_INDIGO, fontSize:30, textAlign:'center', height:40, width:200, backgroundColor:"#fff", color:theme.COLORS.JAPANESE_INDIGO}}
-                                onChangeText = {(text) => this.setState({ addMoney: text })}
-                                placeholder = "0.00₺"
+                                onChangeText = {(text) => this.validate(text, 'addedNumber')}
+                                placeholder = "0,00₺"
                                 />
                             </View>
                             <View style={{marginBottom:30, flexDirection:'row'}}>
                                 <TouchableOpacity
                                     style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
-                                    onPress={() => {this.addMoney()}}>
+                                    onPress={() => {this.state.numberValid ? this.addMoney() : alert("Invalid Value")}}>
                                     <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>OK</Text>
                                     
                                 </TouchableOpacity>
@@ -257,15 +300,16 @@ export default class Balance extends React.Component{
                         <View>
                             <View style={{justifyContent:'center', flexDirection:'row', alignItems:'center', marginTop:10,marginBottom:10}}>
                                 <TextInput
+                                keyboardType='numeric'
                                 style={{borderWidth:1,borderRadius:5,borderColor:theme.COLORS.JAPANESE_INDIGO, fontSize:30, textAlign:'center', height:40, width:200, backgroundColor:"#fff", color:theme.COLORS.JAPANESE_INDIGO}}
-                                onChangeText = {(text) => this.setState({ withdrawnMoney: text })}
-                                placeholder = "0.00₺"
+                                onChangeText = {(text) => this.validate(text, 'withDrawnNumber')}
+                                placeholder = "0,00₺"
                                 />
                             </View>
                             <View style={{marginBottom:30, flexDirection:'row'}}>
                                 <TouchableOpacity
                                     style={{backgroundColor:theme.COLORS.DIAMOND, justifyContent:'center', width:110, height:40, padding:5, margin:10, }}
-                                    onPress={() => {this.withDrawMoney() }}>
+                                    onPress={() => {this.state.numberValid ? this.withDrawMoney() : alert("Invalid Value")}}>
                                     <Text style={{textAlign:"center", fontWeight:"700", color:theme.COLORS.JAPANESE_INDIGO}}>OK</Text>
                                     
                                 </TouchableOpacity>

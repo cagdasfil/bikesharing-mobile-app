@@ -11,13 +11,13 @@ import {
 import { theme } from "galio-framework";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from '@expo/vector-icons';
-import { AsyncStorage, BackHandler } from 'react-native';
+import { AsyncStorage } from 'react-native';
 
 
 
 const exit = async () => {
-  await AsyncStorage.clear()
-  BackHandler.exitApp();
+  await AsyncStorage.clear();
+  //navigation.navigate("Login");
 }
 
 const { width } = Dimensions.get("screen");
