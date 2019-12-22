@@ -20,6 +20,7 @@ export default class Session extends React.Component{
           sessionjson: null,
           userjson: null,
           isLocked: true,
+          isOK: false
         };
     }
 
@@ -112,7 +113,7 @@ export default class Session extends React.Component{
       }
 
       async getLockStatus(){
-        return new Promise( (resolve) => {
+        
         this.setState({ loading: true, disabled: true }, () => {
             fetch('http://35.234.156.204/bikes/' + this.state.sessionjson.bikeId, {
               method: 'GET',
@@ -127,16 +128,19 @@ export default class Session extends React.Component{
                     alert(responseJson.message);
                   }
                   else{
-                      //this.setState({isLocked:responseJson.isLocked});
-                     
-                      resolve(responseJson.isLocked);
+                      this.setState({isLocked:responseJson.isLocked, isOK:true});
+                      console.log("1-"+this.state.isLocked);
+                      console.log("2-"+responseJson.isLocked);
+                      
+                      
                   }
               }).catch((error) => {
                   console.error(error);
                   this.setState({ loading: false, disabled: false });
                 });
           });
-        })
+          return true;
+        
       }
 
       changeLockState(){
@@ -201,11 +205,14 @@ export default class Session extends React.Component{
             alert("User authentication failed.");
         }
 
-        isLockedtemp = await this.getLockStatus();
-        this.setState({isLocked:isLockedtemp});
+        
         //console.log(this.state.isLocked);
         this.getSessionStartTime();
-        this.interval = setInterval(() => {this.getAmount(), this.getLockStatus()}, 10000); // amount reload every 10 secs.
+        
+        this.getLockStatus();
+            
+        
+        this.interval = setInterval(() => {this.getAmount() }, 10000); // amount reload every 10 secs.
     }
 
     componentWillUnmount() {
@@ -214,8 +221,9 @@ export default class Session extends React.Component{
 
     
     render () {
-
+        
         return(
+            
             <View style={styles.container}>
                 <View style={{alignSelf:'stretch', marginTop:30}}>
                     <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginLeft:10, width:50, height:50,
@@ -246,7 +254,8 @@ export default class Session extends React.Component{
                         </Text>
                     </View>
                 </View>
-
+                
+                {this.state.isOK ?
                 <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
                     <ToggleSwitch
                         text={{on: 'UNLOCKED',
@@ -259,7 +268,7 @@ export default class Session extends React.Component{
                                  inactive:  'tomato', 
                                  activeBorder: theme.COLORS.SEASHELL, 
                                  inactiveBorder: theme.COLORS.SEASHELL}}
-                        active={this.state.isLocked}
+                        active={!this.state.isLocked}
                         disabled={false}
                         width={150}
                         radius={35}
@@ -268,6 +277,7 @@ export default class Session extends React.Component{
                         }}
                     />
                 </View>
+                : null}
 
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-end', justifyContent:'flex-end'}}>
                     <TouchableOpacity
@@ -286,6 +296,8 @@ export default class Session extends React.Component{
             </View>
         );
     }
+
+    
 }
 
 const styles = StyleSheet.create({
