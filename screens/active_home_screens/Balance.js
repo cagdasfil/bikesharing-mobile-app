@@ -69,7 +69,7 @@ export default class Balance extends React.Component{
                     }
                   this.state.userjson.user.balance = responseJson.data.newBalance;
                   this._storeData("user",JSON.stringify(this.state.userjson));
-                  this.props.navigation.navigate('Home');
+                  this.props.navigation.navigate('Balance2');
                 }
                 else{
                   alert(responseJson.message);
@@ -102,7 +102,7 @@ export default class Balance extends React.Component{
                     balance : responseJson.data.newBalance, Successful : true, visible2:true});
                   this.state.userjson.user.balance = responseJson.data.newBalance;
                   this._storeData("user",JSON.stringify(this.state.userjson));
-                  this.props.navigation.navigate('Home');
+                  this.props.navigation.navigate('Balance2');
                 }
                 else{
                   this.setState({withdrawResponseMessage:responseJson.message})

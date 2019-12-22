@@ -10,7 +10,9 @@ import { Ionicons } from '@expo/vector-icons';
 import Login from "../screens/Login";
 import Session from "../screens/active_home_screens/Session";
 import Balance from "../screens/home_screens/Balance";
+import Balance2 from "../screens/active_home_screens/Balance";
 import Dockers from "../screens/home_screens/Dockers";
+import Dockers2 from "../screens/active_home_screens/Dockers";
 import QRScanner from "../screens/home_screens/QRScanner";
 import SignUp from '../screens/SignUp';
 import RecoveryPassword from '../screens/RecoveryPassword';
@@ -60,9 +62,9 @@ import DrawerItem from "../components/DrawerItem";
   
   const SessionStack = createBottomTabNavigator(
     {
-      Balance: {screen: Balance},
+      Balance: {screen: Balance2},
       Session: {screen: Session},
-      Dockers: {screen: Dockers}
+      Dockers: {screen: Dockers2}
     },
     {
       defaultNavigationOptions: ({ navigation }) => ({

@@ -86,6 +86,31 @@ export default class Session extends React.Component{
         });
       }
 
+      changeLockState(){
+        this.setState({ loading: true, disabled: true }, () => {
+            fetch('http://35.234.156.204/bikes/changeLockState', {
+              method: 'POST',
+              headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                  bikeId : "5dfe0609f143543590b07f26",//this.state.userId,
+              })
+            }).then((response) => response.json()).then((responseJson) => {
+                  this.setState({ loading: false, disabled: false });
+                  if(responseJson.status == 200){
+                  }
+                  else{
+                      alert(responseJson.message)
+                  }
+              }).catch((error) => {
+                  console.error(error);
+                  this.setState({ loading: false, disabled: false });
+                });
+          });
+      }
+
     
     getAmount() {
         diff = new Date() - this.state.sessionStartTime;
@@ -172,12 +197,12 @@ export default class Session extends React.Component{
                                  inactive:  'tomato', 
                                  activeBorder: theme.COLORS.SEASHELL, 
                                  inactiveBorder: theme.COLORS.SEASHELL}}
-                        active={true}
+                        active={false}
                         disabled={false}
                         width={150}
                         radius={35}
-                        onValueChange={(val) => {
-                        /* your handler function... */
+                        onValueChange={() => {
+                            this.changeLockState();
                         }}
                     />
                 </View>
