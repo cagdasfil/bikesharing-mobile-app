@@ -17,6 +17,7 @@ import QRScanner from "../screens/home_screens/QRScanner";
 import SignUp from '../screens/SignUp';
 import RecoveryPassword from '../screens/RecoveryPassword';
 import ResetPassword from '../screens/ResetPassword';
+import UsageHistory from '../screens/UsageHistory';
 
 // drawer
 import Menu from "./Menu";
@@ -137,10 +138,10 @@ const AppStack = createDrawerNavigator(
         })
       },
       UsageHistory: {
-        screen: HomeStack,
+        screen: UsageHistory,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="UsageHistory" />
+            <DrawerItem focused={focused} title="Usage History" />
           )
         })
       },

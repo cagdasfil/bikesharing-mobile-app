@@ -20,7 +20,7 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
           />
         );
-        case "UsageHistory":
+        case "Usage History":
         return (
           <Ionicons
             name="md-bicycle"
