@@ -13,7 +13,7 @@ export default class Login extends React.Component {
     this.state = {  identifier: "", 
                     password: "",
                     responseMessage:" ",
-                    userJson: null,
+                    user: null,
                     session: null,
                     loading: false,
                     disabled: false,
@@ -59,10 +59,15 @@ export default class Login extends React.Component {
               this.setState({responseMessage:"Wrong username/email or password!"});
             }
             else{
-              this.setState({userJson:responseJson});
+
+              this.setState({user:responseJson});
               this._storeData("user", JSON.stringify(responseJson));
-              session = await this.getSession();
-              this.navigate(session);
+              
+              var openSession = await this.getSession();
+              this.setState({session:openSession});
+              this._storeData("session", JSON.stringify(openSession));
+              
+              this.navigate();
             }
         }).catch((error) => {
             console.error(error);
@@ -71,8 +76,8 @@ export default class Login extends React.Component {
     });
   }
 
-  navigate(session){
-    if(session == null ){
+  navigate(){
+    if(this.state.session == null ){
       this.props.navigation.navigate('Home');
     }
     else{
@@ -83,7 +88,7 @@ export default class Login extends React.Component {
   getSession = async () => {
     return new Promise((resolve) => {
     this.setState({ loading: true, disabled: true }, async () => {
-      await fetch('http://35.234.156.204/usages/openSession/' + this.state.userJson.user._id, {
+      await fetch('http://35.234.156.204/usages/openSession/' + this.state.user.user._id, {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -92,7 +97,6 @@ export default class Login extends React.Component {
       }).then((response) => response.json()).then(async (responseJson) => {
             this.setState({ loading: false, disabled: false });
             if ( responseJson.status === 200 ){
-              this._storeData("session", JSON.stringify(responseJson.data));
               resolve(responseJson.data);
             }
             else{

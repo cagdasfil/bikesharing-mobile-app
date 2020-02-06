@@ -115,15 +115,24 @@ const AppStack = createDrawerNavigator(
         screen: Login,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Login" />
-          )
-        })
+            null
+          ),
+          drawerLockMode: "locked-closed"
+        }),
       },
       Home: {
         screen: HomeStack,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
             <DrawerItem focused={focused} title="Home" />
+          )
+        })
+      },
+      Session: {
+        screen: SessionStack,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            <DrawerItem focused={focused} title="Session" />
           )
         })
       },
@@ -159,44 +168,40 @@ const AppStack = createDrawerNavigator(
           )
         })
       },
-      Session: {
-        screen: SessionStack,
-        navigationOptions: navOpt => ({
-          drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Session" />
-          )
-        })
-      },
       SignUp: {
         screen: SignUp,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="SignUp" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
       Recovery: {
         screen: RecoveryPassword,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Recovery" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
       Reset: {
         screen: ResetPassword,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Reset" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
       QRScanner: {
         screen: QRScanner,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="QRScanner" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
     },

@@ -6,7 +6,7 @@ import {
   Dimensions,
   Image,
   View,
-  Text
+  Text,
 } from "react-native";
 import { theme } from "galio-framework";
 import { TouchableOpacity } from "react-native-gesture-handler";
@@ -15,9 +15,8 @@ import { AsyncStorage } from 'react-native';
 
 
 
-const exit = async () => {
-  await AsyncStorage.clear();
-  //navigation.navigate("Login");
+const exit = () => {
+  AsyncStorage.clear();
 }
 
 const { width } = Dimensions.get("screen");

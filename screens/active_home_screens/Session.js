@@ -16,11 +16,18 @@ export default class Session extends React.Component{
           amount: 0,
           sessionStartTime: new Date(),
           stopwatchStartTime: 0,
-          stopwatchStart: false,
-          sessionjson: null,
-          userjson: null,
+          reset: false,
+          session: null,
+          user: null,
           isLocked: true,
+          isOK: false,
+          isWatchOK: false,
+          stopwatchStart:false
         };
+        this.resetStopwatch = this.resetStopwatch.bind(this);
+        this.toggleStopwatch = this.toggleStopwatch.bind(this);
+
+
     }
 
     formatDate (date) {
@@ -46,7 +53,11 @@ export default class Session extends React.Component{
       _retrieveData = async (dataContainer) => { // takes string input
         try {
           const value = await AsyncStorage.getItem(dataContainer);
-          return value;
+            if(value !== null)
+             {return value;}
+            else
+             {return null;}
+
         } catch (error) {
           // Error retrieving data
           console.log(error);
@@ -54,28 +65,12 @@ export default class Session extends React.Component{
       };
 
       getSessionStartTime = () => {
-        this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/usages/openSession/' + this.state.userjson.user._id, {
-            method: 'GET',
-            headers: {
-                Accept: 'application/json',
-                'Content-Type': 'application/json',
-            }
-          }).then((response) => response.json()).then( async (responseJson) => {
-                this.setState({ loading: false, disabled: false });
-                if (responseJson.status != 200){
-                    alert(responseJson.message);
-                }
-                else{
-                    this.setState({sessionStartTime: new Date(responseJson.data.createdAt)});
-                    this.getAmount();
-                    await this._storeData("sessionStartTime",JSON.stringify(responseJson));
-                }
-            }).catch((error) => {
-                console.error(error);
-                this.setState({ loading: false, disabled: false });
-              });
-        });
+        try{
+            this.setState({sessionStartTime: new Date(this.state.session.createdAt)});
+            this.getAmount();
+        }catch(err){
+            console.error(err);
+        }
       }
 
     endSession = () => {
@@ -87,22 +82,22 @@ export default class Session extends React.Component{
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                userId : this.state.userjson.user._id,//this.state.userId,
-                dockerId : "5defe5061f11c212b835d023" //this.state.lastDockerId
+                userId : this.state.user.user._id,
+                dockerId : "5defe5061f11c212b835d023"
             })
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });
-                if(responseJson.errorCode == -111){
-                    alert('You have no any open session!')
-                }
-                else if(responseJson.errorCode == -110){
-                    alert(responseJson.message)
+                if(responseJson.status === 200){    
+                    
+                    alert('Total payment is : ' + responseJson.data.totalPayment.toFixed(2) + ' ₺.')
+                    this._storeData("user", JSON.stringify(responseJson.data));
+                    AsyncStorage.removeItem('session');
+                    this.setState({reset:false});
+                    this.props.navigation.navigate("Home");
+
                 }
                 else{
                     alert(responseJson.message)
-                    console.log(responseJson.message);
-                    AsyncStorage.removeItem('sessionStartTime');
-                    this.props.navigation.navigate("Home");
                 }
             }).catch((error) => {
                 console.error(error);
@@ -112,9 +107,9 @@ export default class Session extends React.Component{
       }
 
       async getLockStatus(){
-        return new Promise( (resolve) => {
+        
         this.setState({ loading: true, disabled: true }, () => {
-            fetch('http://35.234.156.204/bikes/' + this.state.sessionjson.bikeId, {
+            fetch('http://35.234.156.204/bikes/' + this.state.session.bikeId, {
               method: 'GET',
               headers: {
                   Accept: 'application/json',
@@ -127,21 +122,19 @@ export default class Session extends React.Component{
                     alert(responseJson.message);
                   }
                   else{
-                      //this.setState({isLocked:responseJson.isLocked});
-                     
-                      resolve(responseJson.isLocked);
+                      this.setState({isLocked:responseJson.isLocked, isOK:true});
                   }
               }).catch((error) => {
                   console.error(error);
                   this.setState({ loading: false, disabled: false });
                 });
           });
-        })
+          return true;
+        
       }
 
       changeLockState(){
         this.setState({ loading: true, disabled: true }, () => {
-            console.log(this.state.sessionjson.bikeId);
             fetch('http://35.234.156.204/bikes/changeLockState', {
               method: 'POST',
               headers: {
@@ -149,15 +142,13 @@ export default class Session extends React.Component{
                   'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                  bikeId : this.state.sessionjson.bikeId,//this.state.userId,
+                  bikeId : this.state.session.bikeId
               })
             }).then((response) => response.json()).then((responseJson) => {
-                  this.setState({ loading: false, disabled: false });
-                  if(responseJson.status == 200){
-                  }
-                  else{
-                      alert(responseJson.message)
-                  }
+                    
+                this.setState({ loading: false, disabled: false });
+                //alert(responseJson.message)
+                  
               }).catch((error) => {
                   console.error(error);
                   this.setState({ loading: false, disabled: false });
@@ -168,9 +159,11 @@ export default class Session extends React.Component{
     
     getAmount() {
         diff = new Date() - this.state.sessionStartTime;
+        this.setState({stopwatchStartTime:diff});
+        this.setState({isWatchOK: true})
         diff = diff/60000.0;
-        totalPayment = 0;
-        if(diff>5){
+        totalPayment = 10;
+        /*if(diff>5){
             totalPayment += 5.0
         }
         if(diff>60){
@@ -178,35 +171,68 @@ export default class Session extends React.Component{
         }
         if(diff>1440){
             totalPayment += (diff-1440)*0.4;
-        }
+        }*/
+        totalPayment += (diff)*0.1;
         this.setState({amount:totalPayment});
     }
 
-    /*
-    toggleSwitch(isOn){
-        return !isOn;
-    }
-    */
+    async componentDidMount (){
+        const {navigation} = this.props;
+  
+        this.focusListener = navigation.addListener('didFocus', async () => { 
+          session = await this._retrieveData('session');
+          if(session === "null" || session === null){
+              alert("You do not have any open session");
+              this.props.navigation.navigate("Home");
+          }
+          else{
+            sessionJsoned = JSON.parse(session);
+            this.setState({session : sessionJsoned});
+            this.setState({sessionStartTime: new Date(this.state.session.createdAt)});
+
+            this.getAmount();
+
+          }
+          
+        })
+      }
+      
+      componentWillUnmount(){
+        this.focusListener.remove();
+      }
+
 
     async componentWillMount() {
-        user = await this._retrieveData('user');
-        session = await this._retrieveData('session');
-        if(user != null){
-            userjsoned = JSON.parse(user);
-            this.setState({userjson:userjsoned})
-            sessionjsoned = JSON.parse(session);
-            this.setState({sessionjson:sessionjsoned})
-        }
-        else{
-            alert("User authentication failed.");
+
+        var currentSession = null;
+        var currentUser = null;
+        currentUser = await this._retrieveData('user');
+        currentSession = await this._retrieveData('session');
+        this.resetStopwatch();
+        this.toggleStopwatch();
+        if(currentSession === "null" || currentSession === null){
+         alert("You do not have any open session");
+           this.props.navigation.navigate('Home');
         }
 
-        isLockedtemp = await this.getLockStatus();
-        this.setState({isLocked:isLockedtemp});
-        //console.log(this.state.isLocked);
-        this.getSessionStartTime();
-        this.interval = setInterval(() => {this.getAmount(), this.getLockStatus()}, 10000); // amount reload every 10 secs.
+        else{
+            currentUser = JSON.parse(user);
+            this.setState({user:currentUser})
+            currentSession = JSON.parse(currentSession);
+            this.setState({session:currentSession})
+            this.getSessionStartTime();
+            this.getLockStatus();
+            this.interval = setInterval(() => {this.getAmount() }, 10000); 
+        }
     }
+
+    resetStopwatch() {
+        this.setState({stopwatchStart: false, stopwatchReset: true});
+      }
+
+      toggleStopwatch() {
+        this.setState({stopwatchStart: !this.state.stopwatchStart, stopwatchReset: false});
+      }
 
     componentWillUnmount() {
         clearInterval(this.interval);
@@ -214,8 +240,9 @@ export default class Session extends React.Component{
 
     
     render () {
-
+        
         return(
+            
             <View style={styles.container}>
                 <View style={{alignSelf:'stretch', marginTop:30}}>
                     <TouchableOpacity style={{alignItems:'center', justifyContent:'center', marginLeft:10, width:50, height:50,
@@ -224,6 +251,7 @@ export default class Session extends React.Component{
                         <Ionicons name="md-menu" color={theme.COLORS.SEASHELL} size={35}/>
                     </TouchableOpacity>
                 </View>
+                
                 <View style={{flex:3, alignItems:'center', justifyContent:'center', marginTop:10}}>
                     <View style={{flexDirection:'row', marginBottom:10}}>
                         <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontSize:16, fontWeight:'bold'}}>
@@ -233,10 +261,12 @@ export default class Session extends React.Component{
                             {this.formatDate(this.state.sessionStartTime)}
                         </Text>
                     </View>
+                    {this.state.isWatchOK ?
                     <Stopwatch start secs laps
                         startTime = {this.state.stopwatchStartTime}
                         options = {stopwatchOptions}
                     />
+                    :null}
                     <View style={{flexDirection:'row', marginBottom:10}}>
                         <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontSize:24, fontWeight:'bold'}}>
                             Total : 
@@ -245,8 +275,12 @@ export default class Session extends React.Component{
                             {this.state.amount.toFixed(2)} ₺
                         </Text>
                     </View>
+                    
+                    
                 </View>
-
+                
+                
+                {this.state.isOK ?
                 <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
                     <ToggleSwitch
                         text={{on: 'UNLOCKED',
@@ -259,7 +293,7 @@ export default class Session extends React.Component{
                                  inactive:  'tomato', 
                                  activeBorder: theme.COLORS.SEASHELL, 
                                  inactiveBorder: theme.COLORS.SEASHELL}}
-                        active={this.state.isLocked}
+                        active={!this.state.isLocked}
                         disabled={false}
                         width={150}
                         radius={35}
@@ -268,6 +302,7 @@ export default class Session extends React.Component{
                         }}
                     />
                 </View>
+                : null}
 
                 <View style={{flex:1, flexDirection:'row', alignItems:'flex-end', justifyContent:'flex-end'}}>
                     <TouchableOpacity
@@ -286,6 +321,8 @@ export default class Session extends React.Component{
             </View>
         );
     }
+
+    
 }
 
 const styles = StyleSheet.create({

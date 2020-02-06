@@ -15,7 +15,7 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F7F7EE"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -25,10 +25,15 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.yourcompany.yourappname"
+      "bundleIdentifier": "com.BikeSharing.BikeSharing"
     },
     "android": {
-      "package": "com.yourcompany.yourappname"
+      "package": "com.BikeSharing.BikeSharing",
+      "config": {
+        "googleMaps": {
+          "apiKey": "DE66FB9F7BD9AA58A108E1FADCFF36B1DB3AD824"
+        }
+      }
     }
   }
 }

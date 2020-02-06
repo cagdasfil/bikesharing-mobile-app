@@ -56,6 +56,15 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
           />
         );
+        case "Session":
+        return (
+          <Ionicons
+            name="md-time"
+            family="ArgonExtra"
+            size={22}
+            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
+          />
+        );
       default:
         return null;
     }

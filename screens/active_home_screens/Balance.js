@@ -50,14 +50,14 @@ export default class Balance extends React.Component{
                     
                     );
                     if(responseJson.data.withdrawedForDebt>0){
-                      this.setState({addMoneyResponse: "Successfully Added, " + String(responseJson.data.withdrawedForDebt)+ "₺ Stoppaged!"})
+                      this.setState({addMoneyResponse: "Successfully Added, " + String(responseJson.data.withdrawedForDebt.toFixed(2))+ "₺ Stoppaged!"})
                     }
                     else{
                       this.setState({addMoneyResponse: "Successfully Added."})
                     }
                   this.state.userjson.user.balance = responseJson.data.newBalance;
                   this._storeData("user",JSON.stringify(this.state.userjson));
-                  this.props.navigation.navigate('Home');
+                  this.props.navigation.navigate('Session');
                 }
                 else{
                   alert(responseJson.message);
@@ -90,7 +90,7 @@ export default class Balance extends React.Component{
                     balance : responseJson.data.newBalance, Successful : true, visible2:true});
                   this.state.userjson.user.balance = responseJson.data.newBalance;
                   this._storeData("user",JSON.stringify(this.state.userjson));
-                  this.props.navigation.navigate('Home');
+                  this.props.navigation.navigate('Session');
                 }
                 else{
                   this.setState({withdrawResponseMessage:responseJson.message})
@@ -125,18 +125,32 @@ export default class Balance extends React.Component{
         }
       };
 
-    async componentDidMount () {
-        user = await this._retrieveData('user');
-        if(user != null){
-            userjsoned = JSON.parse(user);
-            this.setState({userjson:userjsoned})
-            this.setState({balance:userjsoned.user.balance})
-        }
-        else{
-            alert("User authentication failed.");
-            this.state.balance = -0.01;
-        }
-    }
+      async componentDidMount (){
+        const {navigation} = this.props;
+  
+        this.focusListener = navigation.addListener('didFocus', async () => { 
+          user = await this._retrieveData('user');
+          userjsoned = JSON.parse(user);
+          this.setState({balance : userjsoned.user.balance})})
+  
+      }
+      
+      componentWillUnmount(){
+        this.focusListener.remove();
+      }
+  
+      async componentWillMount () {
+          user = await this._retrieveData('user');
+          if(user != null){
+              userjsoned = JSON.parse(user);
+              this.setState({userjson:userjsoned})
+              this.setState({balance:userjsoned.user.balance})
+          }
+          else{
+              alert("User authentication failed.");
+              this.state.balance = -0.01;
+          }
+      }
 
     validate(text, type){
 

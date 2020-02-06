@@ -50,7 +50,7 @@ export default class Balance extends React.Component{
                     
                     );
                     if(responseJson.data.withdrawedForDebt>0){
-                      this.setState({addMoneyResponse: "Successfully Added, " + String(responseJson.data.withdrawedForDebt)+ "₺ Stoppaged!"})
+                      this.setState({addMoneyResponse: "Successfully Added, " + String(responseJson.data.withdrawedForDebt.toFixed(2))+ "₺ Stoppaged!"})
                     }
                     else{
                       this.setState({addMoneyResponse: "Successfully Added."})
@@ -125,7 +125,21 @@ export default class Balance extends React.Component{
         }
       };
 
-    async componentDidMount () {
+    async componentDidMount (){
+      const {navigation} = this.props;
+
+      this.focusListener = navigation.addListener('didFocus', async () => { 
+        user = await this._retrieveData('user');
+        userjsoned = JSON.parse(user);
+        this.setState({balance : userjsoned.user.balance})})
+
+    }
+    
+    componentWillUnmount(){
+      this.focusListener.remove();
+    }
+
+    async componentWillMount () {
         user = await this._retrieveData('user');
         if(user != null){
             userjsoned = JSON.parse(user);
