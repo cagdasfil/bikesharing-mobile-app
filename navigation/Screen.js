@@ -2,7 +2,7 @@ import React from "react";
 import { Easing, Animated, View, Text, StyleSheet } from "react-native";
 import {createAppContainer} from "react-navigation";
 import {createDrawerNavigator} from 'react-navigation-drawer';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import theme from "../constants/Theme";
 import { Ionicons } from '@expo/vector-icons';
 
@@ -110,6 +110,27 @@ import DrawerItem from "../components/DrawerItem";
     }
   );
 
+  const UsageHistoryStack = createMaterialTopTabNavigator(
+    {
+      Usages: {screen: UsageHistory},
+      Transactions: {screen: UsageHistory}
+    },
+    {
+      defaultNavigationOptions: ({navigation}) => ({
+        tabBarLabel: ({focused}) => {
+          const { routeName } = navigation.state;
+          return <Text style={{color:theme.COLORS.JAPANESE_INDIGO }}> 
+                    {routeName}
+                  </Text>
+        }
+      }),
+      tabBarOptions: {
+        style: {justifyContent:'flex-end', height:80, backgroundColor:theme.COLORS.SEASHELL},
+        indicatorStyle: {backgroundColor: theme.COLORS.JAPANESE_INDIGO, height:5}
+      },
+    }
+  );
+
 const AppStack = createDrawerNavigator(
     {
       Login: {
@@ -138,7 +159,7 @@ const AppStack = createDrawerNavigator(
         })
       },
       UsageHistory: {
-        screen: UsageHistory,
+        screen: UsageHistoryStack,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
             <DrawerItem focused={focused} title="Usage History" />
@@ -212,10 +233,3 @@ const AppStack = createDrawerNavigator(
   const AppContainer = createAppContainer(AppStack);
   export default AppContainer;
   
-
-  const styles = StyleSheet.create({
-    tabContainer:{
-      flexDirection:'row',
-      height:80,
-    }
-  });
