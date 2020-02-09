@@ -17,7 +17,8 @@ import QRScanner from "../screens/home_screens/QRScanner";
 import SignUp from '../screens/SignUp';
 import RecoveryPassword from '../screens/RecoveryPassword';
 import ResetPassword from '../screens/ResetPassword';
-import UsageHistory from '../screens/UsageHistory';
+import Usages from '../screens/Usages';
+import Transactions from '../screens/Transactions';
 
 // drawer
 import Menu from "./Menu";
@@ -112,8 +113,8 @@ import DrawerItem from "../components/DrawerItem";
 
   const UsageHistoryStack = createMaterialTopTabNavigator(
     {
-      Usages: {screen: UsageHistory},
-      Transactions: {screen: UsageHistory}
+      Usages: {screen: Usages},
+      Transactions: {screen: Transactions}
     },
     {
       defaultNavigationOptions: ({navigation}) => ({

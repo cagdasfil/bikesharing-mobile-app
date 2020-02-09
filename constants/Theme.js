@@ -6,5 +6,6 @@ export default {
         DIAMOND: '#CBF0F9',
         DARK_ORANGE: '#FF8C00',
         SEASHELL: '#F7F7EE',
+        PEACH: '#FFE5B4'
     }
 };

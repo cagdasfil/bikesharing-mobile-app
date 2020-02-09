@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SceneMap, TabView, TabBar } from 'react-native-tab-view';
 import ResetPassword from './ResetPassword';
 
-export default class UsageHistory extends React.Component {
+export default class Transactions extends React.Component {
 
     render() {
         return (
@@ -16,7 +16,7 @@ export default class UsageHistory extends React.Component {
                         onPress= {() => this.props.navigation.toggleDrawer()}>
                         <Ionicons name="md-menu" color={theme.COLORS.SEASHELL} size={35}/>
                     </TouchableOpacity>
-                </View>
+                </View> 
                 <Text>view</Text>
             </View>
         );
