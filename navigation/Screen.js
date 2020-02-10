@@ -134,6 +134,7 @@ import DrawerItem from "../components/DrawerItem";
 
 const AppStack = createDrawerNavigator(
     {
+      Asd: {screen:Transactions},
       Login: {
         screen: Login,
         navigationOptions: navOpt => ({
