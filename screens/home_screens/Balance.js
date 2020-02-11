@@ -25,9 +25,38 @@ export default class Balance extends React.Component{
             userjson: null,
             loading: false,
             disabled: false ,
-            numberValid: false
+            numberValid: false,
+            inDept: false,
+            currentDept: 0
         };
     }
+
+    //
+    getDebt = async () => {
+      this.setState({ loading: true, disabled: true }, async () => {
+        fetch('http://35.234.156.204/transactions/getDebt/5e0014ff5cf769615dcd9456' , {
+          method: 'GET',
+          headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+          }
+        }).then((response) => response.json()).then(async (responseJson) => {
+              this.setState({ loading: false, disabled: false });
+              this.setState({ inDept: false})
+              if ( responseJson.status === 200 ){
+                this.setState({ inDept: true, currentDept: responseJson.data.totalDebt})
+              }
+              else{
+                this.setState({ inDept: false})
+              }
+          }).catch((error) => {
+              console.error(error);
+              this.setState({ loading: false, disabled: false });
+            });
+      });
+    }
+
+    //
 
     addMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
@@ -127,11 +156,11 @@ export default class Balance extends React.Component{
 
     async componentDidMount (){
       const {navigation} = this.props;
-
+      this.getDebt();
       this.focusListener = navigation.addListener('didFocus', async () => { 
         user = await this._retrieveData('user');
         userjsoned = JSON.parse(user);
-        this.setState({balance : userjsoned.user.balance})})
+        this.setState({balance : userjsoned.user.balance})});
 
     }
     
@@ -141,6 +170,7 @@ export default class Balance extends React.Component{
 
     async componentWillMount () {
         user = await this._retrieveData('user');
+        this.getDebt();
         if(user != null){
             userjsoned = JSON.parse(user);
             this.setState({userjson:userjsoned})
@@ -223,7 +253,13 @@ export default class Balance extends React.Component{
                         <Text style={{fontSize:56, color:this.state.balance>=0? theme.COLORS.JAPANESE_INDIGO : 'red'}}>
                             {this.state.balance.toFixed(2)} ₺
                         </Text>
+                        {this.state.inDept ?
+                        <Text style={{fontSize:20, color: 'red'}}>
+                          You owe {this.state.currentDept.toFixed(2)} ₺
+                        </Text>
+                        : null}
                     </View>
+                    
                     <TouchableOpacity style={{flexDirection:'row'}} onPress = {() => {
                       this.RBSheet.open(), this.setState({ check: true });
                     }} >
