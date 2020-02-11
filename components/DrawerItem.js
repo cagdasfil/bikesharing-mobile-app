@@ -20,7 +20,7 @@ class DrawerItem extends React.Component {
             color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
           />
         );
-        case "UsageHistory":
+        case "Usage History":
         return (
           <Ionicons
             name="md-bicycle"
@@ -51,6 +51,15 @@ class DrawerItem extends React.Component {
         return (
           <Ionicons
             name="md-settings"
+            family="ArgonExtra"
+            size={22}
+            color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}
+          />
+        );
+        case "Session":
+        return (
+          <Ionicons
+            name="md-time"
             family="ArgonExtra"
             size={22}
             color={focused ? "white" : theme.COLORS.JAPANESE_INDIGO}

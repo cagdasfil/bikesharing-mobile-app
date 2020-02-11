@@ -2,7 +2,7 @@ import React from "react";
 import { Easing, Animated, View, Text, StyleSheet } from "react-native";
 import {createAppContainer} from "react-navigation";
 import {createDrawerNavigator} from 'react-navigation-drawer';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import theme from "../constants/Theme";
 import { Ionicons } from '@expo/vector-icons';
 
@@ -17,6 +17,8 @@ import QRScanner from "../screens/home_screens/QRScanner";
 import SignUp from '../screens/SignUp';
 import RecoveryPassword from '../screens/RecoveryPassword';
 import ResetPassword from '../screens/ResetPassword';
+import Usages from '../screens/Usages';
+import Transactions from '../screens/Transactions';
 
 // drawer
 import Menu from "./Menu";
@@ -109,15 +111,37 @@ import DrawerItem from "../components/DrawerItem";
     }
   );
 
+  const UsageHistoryStack = createMaterialTopTabNavigator(
+    {
+      Usages: {screen: Usages},
+      Transactions: {screen: Transactions}
+    },
+    {
+      defaultNavigationOptions: ({navigation}) => ({
+        tabBarLabel: ({focused}) => {
+          const { routeName } = navigation.state;
+          return <Text style={{color:theme.COLORS.JAPANESE_INDIGO }}> 
+                    {routeName}
+                  </Text>
+        }
+      }),
+      tabBarOptions: {
+        style: {justifyContent:'flex-end', height:80, backgroundColor:theme.COLORS.SEASHELL},
+        indicatorStyle: {backgroundColor: theme.COLORS.JAPANESE_INDIGO, height:5}
+      },
+    }
+  );
+
 const AppStack = createDrawerNavigator(
     {
       Login: {
         screen: Login,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Login" />
-          )
-        })
+            null
+          ),
+          drawerLockMode: "locked-closed"
+        }),
       },
       Home: {
         screen: HomeStack,
@@ -127,11 +151,19 @@ const AppStack = createDrawerNavigator(
           )
         })
       },
-      UsageHistory: {
-        screen: HomeStack,
+      Session: {
+        screen: SessionStack,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="UsageHistory" />
+            <DrawerItem focused={focused} title="Session" />
+          )
+        })
+      },
+      UsageHistory: {
+        screen: UsageHistoryStack,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            <DrawerItem focused={focused} title="Usage History" />
           )
         })
       },
@@ -159,44 +191,40 @@ const AppStack = createDrawerNavigator(
           )
         })
       },
-      Session: {
-        screen: SessionStack,
-        navigationOptions: navOpt => ({
-          drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Session" />
-          )
-        })
-      },
       SignUp: {
         screen: SignUp,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="SignUp" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
       Recovery: {
         screen: RecoveryPassword,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Recovery" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
       Reset: {
         screen: ResetPassword,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="Reset" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
       QRScanner: {
         screen: QRScanner,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
-            <DrawerItem focused={focused} title="QRScanner" />
-          )
+            null
+          ),
+          drawerLockMode: "locked-closed"
         })
       },
     },
@@ -206,10 +234,3 @@ const AppStack = createDrawerNavigator(
   const AppContainer = createAppContainer(AppStack);
   export default AppContainer;
   
-
-  const styles = StyleSheet.create({
-    tabContainer:{
-      flexDirection:'row',
-      height:80,
-    }
-  });

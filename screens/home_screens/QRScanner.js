@@ -13,8 +13,9 @@ export default class QRScanner extends React.Component {
     this.state = {  qrCode: "",
                     userId: "",
                     dockerId:"",
-                    bikeId: "",
-                    userjson: null,
+                    bikeId : "",
+                    session:null,
+                    user: null,
                     loading: false,
                     disabled: false,
                     hasCameraPermission: null,
@@ -23,9 +24,9 @@ export default class QRScanner extends React.Component {
                   }
   }
 
-  _storeData = async (user) => {
+  _storeData = async (dataContainer, data) => { //both parameters are string.
     try {
-      await AsyncStorage.setItem('user', user);
+      await AsyncStorage.setItem(dataContainer, data);
     } catch (error) {
       // Error saving data
       console.log(error);
@@ -74,13 +75,19 @@ export default class QRScanner extends React.Component {
         },
         body: JSON.stringify({
             bikeId : this.state.bikeId,
-            userId : this.state.userjson.user._id,
+            userId : this.state.user.user._id,
             dockerId : "5deb049a00e8d72bd4fe78cf"//A1 DockerID
         })
       }).then((response) => response.json()).then((responseJson) => {
+
         this.setState({ loading: false, disabled: false });
+        
         if(responseJson.status===200){
+
+          this.setState({session:responseJson.data});
+          this._storeData("session", JSON.stringify(responseJson.data));
           this.props.navigation.navigate('Session');
+
         }
         else{
           alert(responseJson.message);
@@ -104,10 +111,10 @@ export default class QRScanner extends React.Component {
 
   async componentWillMount () {
     //this.saveData();
-    user = await this._retrieveData('user');
+    var currentUser = await this._retrieveData('user');
     if(user != null){
-        userjsoned = JSON.parse(user);
-        this.setState({userjson:userjsoned})
+        currentUser = JSON.parse(currentUser);
+        this.setState({user:currentUser});
     }
     else{
         alert("User authentication failed.");
@@ -140,8 +147,8 @@ export default class QRScanner extends React.Component {
             <Dialog.Container
               onBackdropPress={() => {this.setState({ visible: false })}} 
               visible={this.state.visible}>
-              <Dialog.Title>Baslasin mi</Dialog.Title>  
-              <Dialog.Button label="OK" onPress={() => {this.saveData();this.setState({ visible: false })}} />
+              <Dialog.Title>Do you want to start session?</Dialog.Title>  
+              <Dialog.Button label="OK" onPress={() => {this.saveData();this.setState({ visible: false });}} />
               <Dialog.Button label="Cancel" onPress={() => this.setState({ visible: false })} />
             </Dialog.Container>
           </View>
@@ -155,6 +162,6 @@ export default class QRScanner extends React.Component {
   handleBarCodeScanned = ({ type, data }) => {
     this.setState({ scanned: true, qrCode: data });
     this.checkBikeAvailability();
-    //alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+    
   };
 }
