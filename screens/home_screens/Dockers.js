@@ -3,12 +3,14 @@ import React from 'react';
 import MapView, { Marker, MapViewAnimated } from 'react-native-maps';
 import theme from '../../constants/Theme';
 
-var a1BikeNum = 0;
-var a4BikeNum = 0;
-var a1Address = null;
-var a4Address = null;
-export default class Dockers extends React.Component{
 
+export default class Dockers extends React.Component{
+  constructor (props) {
+    super(props);
+    this.state={
+      markers: [],
+    };
+}
 
   getBikes = async () => {
     this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
@@ -20,21 +22,16 @@ export default class Dockers extends React.Component{
         },
       }).then((response) => response.json()).then( async (responseJson) => {
             this.setState({ loading: false, disabled: false });
-            if ( responseJson.data.length == 2 ){
-
-              const a1 = responseJson.data[0];
-              const a4 = responseJson.data[1];
-              a1BikeNum = a1.availableBikeNumber;
-              a4BikeNum = a4.availableBikeNumber;
-              a1Address = a1.currentDocker.address;
-              a4Address = a4.currentDocker.address;
-
-              this.setState({responseJS:responseJson});
-            }
-            else{
-              //this.setState("error in dockers");
-              
-            }
+              const markers = responseJson.data.map((result) => ({
+                key : result.currentDocker.id,
+                title : result.currentDocker.address,
+                latlng: {
+                  latitude: result.currentDocker.coordinates.latitude,
+                  longitude: result.currentDocker.coordinates.longitude,
+                },
+                number: result.availableBikeNumber,
+              }))
+              this.setState({markers});
         }).catch((error) => {
             console.error(error);
             this.setState({ loading: false, disabled: false });
@@ -43,7 +40,7 @@ export default class Dockers extends React.Component{
   }
 
 
-  async componentDidMount () {
+  componenDidMount () {
     this.interval = setInterval(() => this.getBikes(), 1000); // amount reload every 10 secs.
   }
 
@@ -53,7 +50,7 @@ export default class Dockers extends React.Component{
 
     render() {
         return (
-          
+         
           <View style={styles.container}
           
           >
@@ -66,25 +63,22 @@ export default class Dockers extends React.Component{
                     longitude: 32.778302,
                     latitudeDelta: 0.0522,
                     longitudeDelta: 0,
-                  }} >
-              <Marker
-                coordinate={{latitude:39.907216, longitude: 32.783874,}}
-                title = {a1Address}
-                
+                  }} 
               >
-                <View style={styles.marker}>
-                  <Text style={{color:'white', fontWeight:'bold', fontSize:18}}>{a1BikeNum}</Text>
-                </View>
-              </Marker>
-              <Marker
-                coordinate={{latitude:39.891434, longitude: 32.793641,}}
-                title = {a4Address}
-              >
-                <View style={styles.marker}>
-                  <Text style={{color:theme.COLORS.SEASHELL, fontWeight:'bold', fontSize:18}}>{a4BikeNum}</Text>
-                </View>
-              </Marker>
-            </MapView>
+              {
+               this.state.markers.map(marker  =>  ( 
+                  <Marker 
+                    key = {marker.key}
+                    coordinate={marker.latlng}
+                    title={marker.title}
+                  >
+                    <View style={styles.marker}>
+                      <Text style={{color:theme.COLORS.SEASHELL, fontWeight:'bold', fontSize:18}}>{marker.number}</Text>
+                    </View>
+                </Marker>
+              ))}
+             </MapView>
+           
           </View>
         );
     }
