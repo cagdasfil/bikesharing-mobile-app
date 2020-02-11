@@ -60,7 +60,7 @@ export default class Balance extends React.Component{
 
     addMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/payments/addMoney', {
+          fetch('http://35.234.156.204/transactions/addMoney', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -101,7 +101,7 @@ export default class Balance extends React.Component{
     
     withDrawMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/payments/withdrawMoney', {
+          fetch('http://35.234.156.204/transactions/withdrawMoney', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
