@@ -47,6 +47,7 @@ export default class Usages extends React.Component {
                         startDockerName: result.startDocker.address,
                         endDockerName: result.endDocker.address
                     }))
+                    
                     this.setState({usages});
             }).catch((error) => {
                 console.error(error);
@@ -86,38 +87,38 @@ export default class Usages extends React.Component {
                 </View>
                 <ScrollView>
                 {this.state.usages.map(usage  =>  (
-                    <View key={usage.key} style={{marginHorizontal:10, marginVertical:5, backgroundColor:theme.COLORS.PEACH, borderWidth:1, borderColor:theme.COLORS.JAPANESE_INDIGO}}>
+                    <View key={usage.key} style={{marginHorizontal:10, marginTop:5, borderBottomWidth:1, borderColor:theme.COLORS.JAPANESE_INDIGO}}>
                         <View style={{marginLeft:5}}>
                             <Text style={{color:theme.COLORS.JAPANESE_INDIGO}}>{this.formatDate(new Date(usage.createdAt))}</Text>
                         </View>
-                    <View style={{flexDirection:'row', justifyContent:'center', marginVertical:10}}>
-                        <View style={{alignItems:'center', flexDirection:'row'}}>
-                            <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Duration: </Text><Text style={{color:theme.COLORS.JAPANESE_INDIGO}}>{parseInt(usage.duration)}min</Text>
+                        <View style={{flexDirection:'row', justifyContent:'center', marginVertical:10}}>
+                            <View style={{alignItems:'center', flexDirection:'row'}}>
+                                <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Duration: </Text><Text style={{color: '#891705'}}>{parseInt(usage.duration)} min</Text>
+                            </View>
+                            <View style={{alignItems:'center', flexDirection:'row', marginLeft:25}}>
+                                <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Total: </Text><Text style={{color: '#047c16'}}>{usage.total.toFixed(2)}₺</Text>
+                            </View>
                         </View>
-                        <View style={{alignItems:'center', flexDirection:'row', marginLeft:25}}>
-                            <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Total: </Text><Text style={{color:theme.COLORS.JAPANESE_INDIGO}}>{usage.total.toFixed(2)}₺</Text>
+                        <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
+                            <View style={{marginHorizontal:5, alignItems:'center'}}>
+                                <Ionicons name="md-pin" size={20} color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Text style={{fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}>{usage.startDockerName}</Text>
+                            </View>
+                            <View style={{flexDirection:'row'}}>
+                                <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Ionicons name="md-arrow-forward" color={theme.COLORS.JAPANESE_INDIGO}/>
+                            </View>
+                            <View style={{marginHorizontal:5, alignItems:'center'}}>
+                                <Ionicons name="md-pin" size={20} color={theme.COLORS.JAPANESE_INDIGO}/>
+                                <Text style={{fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}>{usage.endDockerName}</Text>
+                            </View>
                         </View>
-                    </View>
-                    <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
-                        <View style={{marginHorizontal:5, alignItems:'center'}}>
-                            <Ionicons name="md-pin" size={20} color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Text style={{fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}>{usage.startDockerName}</Text>
-                        </View>
-                        <View style={{flexDirection:'row'}}>
-                            <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Ionicons name="md-remove" color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Ionicons name="md-arrow-forward" color={theme.COLORS.JAPANESE_INDIGO}/>
-                        </View>
-                        <View style={{marginHorizontal:5, alignItems:'center'}}>
-                            <Ionicons name="md-pin" size={20} color={theme.COLORS.JAPANESE_INDIGO}/>
-                            <Text style={{fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}>{usage.endDockerName}</Text>
-                        </View>
-                    </View>
                     </View>
                 ))}
                 </ScrollView>
