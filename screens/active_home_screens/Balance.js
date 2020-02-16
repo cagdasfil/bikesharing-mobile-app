@@ -26,7 +26,7 @@ export default class Balance extends React.Component{
             loading: false,
             disabled: false ,
             numberValid: false,
-            inDept: false,
+            inDebt: false,
             currentDept: 0
         };
     }
@@ -34,20 +34,20 @@ export default class Balance extends React.Component{
     //
     getDebt = async () => {
       this.setState({ loading: true, disabled: true }, async () => {
-        fetch('http://35.234.156.204/transactions/getDebt/5e0014ff5cf769615dcd9456' , {
+        fetch('http://35.234.156.204/transactions/getDebt/'+this.state.userjson._id , {
           method: 'GET',
           headers: {
-              Accept: 'application/json',
+              Accept: 'application/json', 
               'Content-Type': 'application/json',
           }
         }).then((response) => response.json()).then(async (responseJson) => {
               this.setState({ loading: false, disabled: false });
-              this.setState({ inDept: false})
+              this.setState({ inDebt: false})
               if ( responseJson.status === 200 ){
-                this.setState({ inDept: true, currentDept: responseJson.data.totalDebt})
+                this.setState({ inDebt: true, currentDept: responseJson.data.totalDebt})
               }
               else{
-                this.setState({ inDept: false})
+                this.setState({ inDebt: false})
               }
           }).catch((error) => {
               console.error(error);
@@ -60,7 +60,7 @@ export default class Balance extends React.Component{
 
     addMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/payments/addMoney', {
+          fetch('http://35.234.156.204/transactions/addMoney', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -101,7 +101,7 @@ export default class Balance extends React.Component{
     
     withDrawMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
-          fetch('http://35.234.156.204/payments/withdrawMoney', {
+          fetch('http://35.234.156.204/transactions/withdrawMoney', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -156,7 +156,6 @@ export default class Balance extends React.Component{
 
       async componentDidMount (){
         const {navigation} = this.props;
-        this.getDebt();
         this.focusListener = navigation.addListener('didFocus', async () => { 
           user = await this._retrieveData('user');
           userjsoned = JSON.parse(user);
@@ -170,7 +169,6 @@ export default class Balance extends React.Component{
   
       async componentWillMount () {
           user = await this._retrieveData('user');
-          this.getDebt();
           if(user != null){
               userjsoned = JSON.parse(user);
               this.setState({userjson:userjsoned})
