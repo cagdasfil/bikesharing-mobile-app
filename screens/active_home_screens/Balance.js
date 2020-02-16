@@ -31,32 +31,7 @@ export default class Balance extends React.Component{
         };
     }
 
-    //
-    getDebt = async () => {
-      this.setState({ loading: true, disabled: true }, async () => {
-        fetch('http://35.234.156.204/transactions/getDebt/'+this.state.userjson._id , {
-          method: 'GET',
-          headers: {
-              Accept: 'application/json', 
-              'Content-Type': 'application/json',
-          }
-        }).then((response) => response.json()).then(async (responseJson) => {
-              this.setState({ loading: false, disabled: false });
-              this.setState({ inDebt: false})
-              if ( responseJson.status === 200 ){
-                this.setState({ inDebt: true, currentDept: responseJson.data.totalDebt})
-              }
-              else{
-                this.setState({ inDebt: false})
-              }
-          }).catch((error) => {
-              console.error(error);
-              this.setState({ loading: false, disabled: false });
-            });
-      });
-    }
-
-    //
+    
 
     addMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {

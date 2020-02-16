@@ -28,14 +28,14 @@ export default class Balance extends React.Component{
             disabled: false ,
             numberValid: false,
             inDebt: false,
-            currentDept: 0
+            currentDept: 5
         };
     }
 
-    //
+    // It takes debt amount from database
     getDebt = async () => {
       this.setState({ loading: true, disabled: true }, async () => {
-        fetch('http://35.234.156.204/transactions/getDebt/'+ "5de40e78d8b373149471f969", {//this.state.userId, {
+        fetch('http://35.234.156.204/transactions/getDebt/'+ this.state.userId, {
           method: 'GET',
           headers: {
               Accept: 'application/json',
@@ -44,8 +44,8 @@ export default class Balance extends React.Component{
         }).then((response) => response.json()).then(async (responseJson) => {
               this.setState({ loading: false, disabled: false });
               this.setState({ inDebt: false})
-              if ( responseJson.status === 200 ){
-                this.setState({ inDebt: true, currentDept: responseJson.data.totalDebt})
+              if ( responseJson.status === 200 ){ // Status code 200 means there is debt
+                this.setState({ inDebt: true, currentDept: responseJson.data.totalDebt}) // inDebt=true makes warning visible
               }
               else{
                 this.setState({ inDebt: false})
@@ -57,7 +57,6 @@ export default class Balance extends React.Component{
       });
     }
 
-    //
 
     addMoney = async () => {
         this.setState({ loading: true, disabled: true }, () => {
@@ -88,6 +87,7 @@ export default class Balance extends React.Component{
                   this.state.userjson.user.balance = responseJson.data.newBalance;
                   this._storeData("user",JSON.stringify(this.state.userjson));
                   this.props.navigation.navigate('Home');
+                  this.getDebt(); // Check debt whenever adding money
                 }
                 else{
                   alert(responseJson.message);
@@ -161,8 +161,9 @@ export default class Balance extends React.Component{
         user = await this._retrieveData('user');
         userjsoned = JSON.parse(user);
         this.setState({balance : userjsoned.user.balance})
+        this.getDebt(); // When back to balance page, check debt again
       });
-      this.getDebt();
+      
     }
     
     componentWillUnmount(){
@@ -174,10 +175,9 @@ export default class Balance extends React.Component{
         if(user != null){
             userjsoned = JSON.parse(user);
             this.setState({userjson:userjsoned})
-            console.log(this.state.userjson.user.id);
             this.setState({balance:userjsoned.user.balance});
-            this.setState({userId:userjsoned.user._id});
-            this.getDebt();
+            this.setState({userId:userjsoned.user._id}); // attach userId to variable
+            this.getDebt(); // check debt
         }
         else{
             alert("User authentication failed.");
@@ -257,7 +257,7 @@ export default class Balance extends React.Component{
                         <Text style={{fontSize:56, color:this.state.balance>=0? theme.COLORS.JAPANESE_INDIGO : 'red'}}>
                             {this.state.balance.toFixed(2)} ₺
                         </Text>
-                        {this.state.inDebt ?
+                        {this.state.inDebt ? // If inDebt = true make visible 
                         <Text style={{fontSize:20, color: 'red'}}>
                           You owe {this.state.currentDept.toFixed(2)} ₺
                         </Text>

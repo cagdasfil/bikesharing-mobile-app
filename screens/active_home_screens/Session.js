@@ -20,13 +20,7 @@ export default class Session extends React.Component{
           session: null,
           user: null,
           isLocked: true,
-<<<<<<< HEAD
           isOK: false
-=======
-          isOK: false,
-          isWatchOK: false,
-          stopwatchStart:false
->>>>>>> ed48bf2f909515fe6d13bbda82bbaf26766511e4
         };
         this.resetStopwatch = this.resetStopwatch.bind(this);
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
@@ -127,13 +121,10 @@ export default class Session extends React.Component{
                   }
                   else{
                       this.setState({isLocked:responseJson.isLocked, isOK:true});
-<<<<<<< HEAD
                       console.log("1-"+this.state.isLocked);
                       console.log("2-"+responseJson.isLocked);
                       
                       
-=======
->>>>>>> ed48bf2f909515fe6d13bbda82bbaf26766511e4
                   }
               }).catch((error) => {
                   console.error(error);
@@ -235,18 +226,6 @@ export default class Session extends React.Component{
             this.getLockStatus();
             this.interval = setInterval(() => {this.getAmount() }, 10000); 
         }
-<<<<<<< HEAD
-
-        
-        //console.log(this.state.isLocked);
-        this.getSessionStartTime();
-        
-        this.getLockStatus();
-            
-        
-        this.interval = setInterval(() => {this.getAmount() }, 10000); // amount reload every 10 secs.
-=======
->>>>>>> ed48bf2f909515fe6d13bbda82bbaf26766511e4
     }
 
     resetStopwatch() {
@@ -302,10 +281,7 @@ export default class Session extends React.Component{
                     
                 </View>
                 
-<<<<<<< HEAD
-=======
                 
->>>>>>> ed48bf2f909515fe6d13bbda82bbaf26766511e4
                 {this.state.isOK ?
                 <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
                     <ToggleSwitch
