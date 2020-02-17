@@ -13,12 +13,6 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from '@expo/vector-icons';
 import { AsyncStorage } from 'react-native';
 
-
-
-const exit = () => {
-  AsyncStorage.clear();
-}
-
 const { width } = Dimensions.get("screen");
 
 const Drawer = props => (
@@ -29,7 +23,10 @@ const Drawer = props => (
     <View flex={1}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         <DrawerItems {...props} />
-        <TouchableOpacity style={styles.exit} onPress={exit}>
+        <TouchableOpacity style={styles.exit} onPress={()=>{
+            AsyncStorage.clear();
+            props.navigation.navigate('Login');
+          }}>
           <Text style={{fontSize:16, marginRight:5}}>EXIT</Text>
           <Ionicons name="md-exit" size={24} />
         </TouchableOpacity>
