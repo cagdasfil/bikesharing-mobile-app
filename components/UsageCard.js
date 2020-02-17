@@ -67,7 +67,7 @@ export default class UsageCard extends React.Component {
         else{
             return (
                 <View style={{margin:10, alignItems:'center'}}>
-                    <Text>There is no usage data!</Text>
+                    <Text style={{color:theme.COLORS.JAPANESE_INDIGO}}>There is no usage data!</Text>
                 </View>
             );
         }
