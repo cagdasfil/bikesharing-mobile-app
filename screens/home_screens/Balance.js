@@ -110,7 +110,7 @@ export default class Balance extends React.Component{
             },
             body: JSON.stringify({
                 userId : this.state.userjson.user._id,
-                amount : this.state.withdrawnMoney,
+                amount : Number(this.state.withdrawnMoney),
             })
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });

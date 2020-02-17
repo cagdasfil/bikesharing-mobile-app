@@ -20,8 +20,8 @@ export default class Transaction extends React.Component {
             return datestring;
     }
 
-    formatTransactionAmount (amount) {
-        if(amount>0){
+    formatTransactionAmount (amount, type) {
+        if(type === "add"){
             return <Text style={{fontSize:28, color:'green'}}>+{amount.toFixed(2)}</Text>;
         }
         else{
@@ -43,7 +43,7 @@ export default class Transaction extends React.Component {
                                     </View>
                                 </View>
                                 <View style={{flex:1, alignItems:'flex-end', justifyContent:'center'}}>
-                                    {this.formatTransactionAmount(transaction.transactionAmount)}
+                                    {this.formatTransactionAmount(transaction.transactionAmount, transaction.type)}
                                 </View>
                             </View>
                             <View style={{flexDirection:'row', marginHorizontal:5, marginBottom:5}}>
@@ -51,7 +51,7 @@ export default class Transaction extends React.Component {
                                     <Text style={{fontWeight:'normal', color:theme.COLORS.JAPANESE_INDIGO}}>Usage ID: </Text><Text style={{color:theme.COLORS.JAPANESE_INDIGO}}>-</Text>
                                 </View>
                                 <View style={{flex:1, flexDirection:'row', justifyContent:'flex-end'}}>
-                                    <Text style={{color:'gray'}}>Balance: </Text><Text style={{color:'gray'}}>{transaction.balanceAfter}</Text>
+                                    <Text style={{color:'gray'}}>Balance: </Text><Text style={{color:'gray'}}>{transaction.balanceAfter.toFixed(2)}</Text>
                                 </View>
                             </View>
                         </View>
