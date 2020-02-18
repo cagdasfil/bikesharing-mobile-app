@@ -16,7 +16,7 @@ export default class QRScanner extends React.Component {
                     session:null,
                     user: null,
                     position:{
-                      latitute:39,
+                      latitude:39,
                       longitude:39,
                       latitudeDelta:0,
                       longitudeDelta:0,
@@ -86,14 +86,13 @@ export default class QRScanner extends React.Component {
             bikeId : this.state.bikeId,
             userId : this.state.user.user._id,
             dockerId : this.state.dockerId,// MM DockerID
-            location:[39,39],
+            location:[this.state.position.latitude,this.state.position.longitude],
         })
       }).then((response) => response.json()).then((responseJson) => {
 
         this.setState({ loading: false, disabled: false });
         
         if(responseJson.status===200){
-          console.log(this.state.position);
           this.setState({session:responseJson.data});
           this._storeData("session", JSON.stringify(responseJson.data));
           this.props.navigation.navigate('Session');
@@ -131,6 +130,7 @@ export default class QRScanner extends React.Component {
         alert("User authentication failed.");
     }
     if(position != null){
+       position = JSON.parse(position);
        this.setState({position:position});
     }
     else{
