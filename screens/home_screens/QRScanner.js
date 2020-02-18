@@ -5,7 +5,6 @@ import { BarCodeScanner } from 'expo-barcode-scanner';
 import theme from '../../constants/Theme';
 import {AsyncStorage} from 'react-native';
 import Dialog from 'react-native-dialog';
-
 export default class QRScanner extends React.Component {
 
   constructor(){
@@ -16,6 +15,12 @@ export default class QRScanner extends React.Component {
                     bikeId : "",
                     session:null,
                     user: null,
+                    position:{
+                      latitute:39,
+                      longitude:39,
+                      latitudeDelta:0,
+                      longitudeDelta:0,
+                    },
                     loading: false,
                     disabled: false,
                     hasCameraPermission: null,
@@ -54,7 +59,11 @@ export default class QRScanner extends React.Component {
       }).then((response) => response.json()).then((responseJson) => {
         this.setState({ loading: false, disabled: false });
         if(responseJson.status===200){
-          this.setState({bikeId:responseJson.data._id,visible:true});
+          this.setState({
+            bikeId:responseJson.data._id,
+            visible:true,
+            dockerId:responseJson.data.dockerId,
+          });
         }
         else{
           alert(responseJson.message);
@@ -76,14 +85,15 @@ export default class QRScanner extends React.Component {
         body: JSON.stringify({
             bikeId : this.state.bikeId,
             userId : this.state.user.user._id,
-            dockerId : "5e43155560f52141463b0ee0"// MM DockerID
+            dockerId : this.state.dockerId,// MM DockerID
+            location:[39,39],
         })
       }).then((response) => response.json()).then((responseJson) => {
 
         this.setState({ loading: false, disabled: false });
         
         if(responseJson.status===200){
-
+          console.log(this.state.position);
           this.setState({session:responseJson.data});
           this._storeData("session", JSON.stringify(responseJson.data));
           this.props.navigation.navigate('Session');
@@ -112,12 +122,19 @@ export default class QRScanner extends React.Component {
   async componentWillMount () {
     //this.saveData();
     var currentUser = await this._retrieveData('user');
+    var position = await this._retrieveData('position');
     if(user != null){
         currentUser = JSON.parse(currentUser);
         this.setState({user:currentUser});
     }
     else{
         alert("User authentication failed.");
+    }
+    if(position != null){
+       this.setState({position:position});
+    }
+    else{
+      alert("Please Click The Dockers Page");
     }
 }
 
