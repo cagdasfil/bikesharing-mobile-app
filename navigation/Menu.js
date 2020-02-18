@@ -16,10 +16,33 @@ import colortheme from '../constants/Theme';
 
 const { width } = Dimensions.get("screen");
 
-const Drawer = props => (
+const _retrieveData = async (dataContainer) => { // takes string input
+  try {
+    const value = AsyncStorage.getItem(dataContainer);
+    if (value != null){
+      return value;
+    }
+  } catch (error) {
+    // Error retrieving data
+    console.log(error);
+  }
+};
+
+const retrieveUserName = async () => {
+  user =  await _retrieveData("user");
+  userjsoned = JSON.parse(user);
+  return userjsoned.user.username;
+}
+
+let username = "";
+
+const Drawer = props => {
+  retrieveUserName().then((result)=>{username=result});
+  return (
   <View style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
     <View flex={0.05} style={styles.header}>
       <Image style={styles.logo} source={require("../assets/images/default_profile_picture.jpg")} />
+      <Text style={{fontWeight:'bold'}}>{username}</Text>
     </View>
     <View flex={1}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
@@ -34,7 +57,7 @@ const Drawer = props => (
       </ScrollView>
     </View>
   </View>
-);
+)};
 
 const Menu = {
   contentComponent: props => <Drawer {...props} />,
@@ -78,6 +101,7 @@ const styles = StyleSheet.create({
       width:150,
       height:150,
       borderRadius:75,
+      marginBottom:5
   },
   exit:{
     flex:1,
