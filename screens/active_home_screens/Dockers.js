@@ -1,16 +1,49 @@
 import { StyleSheet, View, Dimensions, Text } from 'react-native';
 import React from 'react';
-import MapView, { Marker, MapViewAnimated } from 'react-native-maps';
+import Geojson from 'react-native-geojson';
+import MapView from 'react-native-maps';
 import theme from '../../constants/Theme';
-
-
+import {AsyncStorage} from 'react-native';
+var defaultRegion = {
+            latitude: 39.897053,
+            longitude: 32.778302,
+            latitudeDelta: 0.0522,
+            longitudeDelta: 0,
+}
+export const getCurrentLocation = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(position => resolve(position), e => reject(e));
+  });
+};
 export default class Dockers extends React.Component{
   constructor (props) {
     super(props);
     this.state={
-      markers: [],
+        virtualZones:{
+          type: 'FeatureCollection',
+          features:[],
+        },
+        region: defaultRegion,
     };
 }
+  _storeData = async (dataContainer, data) => { //both parameters are string.
+    try {
+      await AsyncStorage.setItem(dataContainer, data);
+    } catch (error) {
+      // Error saving data
+      console.log(error);
+    }
+  };
+
+  _retrieveData = async (data) => { // takes string input
+    try {
+      const value = await AsyncStorage.getItem(data);
+      return value;
+    } catch (error) {
+      // Error retrieving data
+      console.log(error);
+    }
+  };
 
   getBikes = async () => {
     this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
@@ -22,16 +55,15 @@ export default class Dockers extends React.Component{
         },
       }).then((response) => response.json()).then( async (responseJson) => {
             this.setState({ loading: false, disabled: false });
-              const markers = responseJson.data.map((result) => ({
-                key : result.currentDocker.id,
-                title : result.currentDocker.address,
-                latlng: {
-                  latitude: result.currentDocker.coordinates.latitude,
-                  longitude: result.currentDocker.coordinates.longitude,
-                },
-                number: result.availableBikeNumber,
+            const features = responseJson.data.map((result) => ({
+                type: result.currentDocker.coordinates.type,
+                properties:result.currentDocker.coordinates.properties,
+                geometry:result.currentDocker.coordinates.geometry,
               }))
-              this.setState({markers});
+              
+              this.setState(features.map((zones)=>(
+                this.state.virtualZones.features.push(zones)
+              )));
         }).catch((error) => {
             console.error(error);
             this.setState({ loading: false, disabled: false });
@@ -40,8 +72,24 @@ export default class Dockers extends React.Component{
   }
 
 
-  componenDidMount () {
+  componenWillMount () {
     this.interval = setInterval(() => this.getBikes(), 1000); // amount reload every 10 secs.
+  }
+
+  async componentDidMount() {
+    return getCurrentLocation().then(position => {
+      if (position) {
+        this.setState({
+          region: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.003,
+            longitudeDelta: 0.003,
+          },
+        });
+        this._storeData("position", JSON.stringify(this.state.region));
+      }
+    });
   }
 
   componentWillUnmount() {
@@ -49,34 +97,30 @@ export default class Dockers extends React.Component{
   }
 
     render() {
+   
         return (
          
           <View style={styles.container}
           
           >
             <MapView
+                showsUserLocation={true}
                 onMapReady = {this.getBikes}
                 //onPress = {this.getBikes}
                 style={styles.mapStyle}
-                initialRegion={{
-                    latitude: 39.897053,
-                    longitude: 32.778302,
-                    latitudeDelta: 0.0522,
-                    longitudeDelta: 0,
-                  }} 
+                region={{
+                    latitude:this.state.region.latitude,
+                    longitude: this.state.region.longitude,
+                    latitudeDelta: this.state.region.latitudeDelta,
+                    longitudeDelta: this.state.region.longitudeDelta,
+                  }}
               >
-              {
-               this.state.markers.map(marker  =>  ( 
-                  <Marker 
-                    key = {marker.key}
-                    coordinate={marker.latlng}
-                    title={marker.title}
-                  >
-                    <View style={styles.marker}>
-                      <Text style={{color:theme.COLORS.SEASHELL, fontWeight:'bold', fontSize:18}}>{marker.number}</Text>
-                    </View>
-                </Marker>
-              ))}
+              <Geojson 
+                geojson={this.state.virtualZones} 
+                strokeColor="red"
+                fillColor="red"
+                strokeWidth={2}
+              />
              </MapView>
            
           </View>
