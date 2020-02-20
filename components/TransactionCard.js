@@ -11,8 +11,7 @@ export default class Transaction extends React.Component {
 
     formatDate (date) {
         var datestring = 
-            " " 
-            + ("0" + date.getDate()).slice(-2)  + "/" 
+              ("0" + date.getDate()).slice(-2)  + "/" 
             + ("0" + (date.getMonth() + 1)).slice(-2)+ "/" 
             + date.getFullYear() + " " 
             + ("0" + date.getHours()).slice(-2) + ":" 
@@ -34,23 +33,14 @@ export default class Transaction extends React.Component {
             return (
                 <ScrollView>
                     {this.props.transactions.map(transaction  =>  (
-                        <View key={transaction.key} style={{marginHorizontal:10, marginTop:5, borderBottomWidth:1, borderColor:theme.COLORS.JAPANESE_INDIGO}}>
-                            <View style={{flexDirection:'row', marginHorizontal:5}}>
-                                <View style={{flex:1}}>
-                                    <Text style={{fontWeight:'bold', color:theme.COLORS.JAPANESE_INDIGO}}>{this.formatDate(new Date(transaction.createdAt))}</Text>
-                                    <View style={{flexDirection:'row', marginVertical:5, marginLeft:15}}>
-                                        <Text style={{fontWeight:'normal', color:theme.COLORS.JAPANESE_INDIGO}}>Type: </Text><Text style={{fontStyle:'italic', color:theme.COLORS.JAPANESE_INDIGO}}>{transaction.type}</Text>
-                                    </View>
-                                </View>
-                                <View style={{flex:1, alignItems:'flex-end', justifyContent:'center'}}>
-                                    {this.formatTransactionAmount(transaction.transactionAmount, transaction.type)}
-                                </View>
+                        <View key={transaction.key} style={{marginHorizontal:10, flexDirection:'row', marginTop:5, borderBottomWidth:1, borderColor:theme.COLORS.JAPANESE_INDIGO}}>
+                            <View style={{flex:1, paddingLeft:5}}>
+                                <Text style={{fontWeight:'normal', color:theme.COLORS.JAPANESE_INDIGO}}>{this.formatDate(new Date(transaction.createdAt))}</Text>
+                                <Text style={{fontWeight:'bold', marginLeft:15, fontSize:20, color:theme.COLORS.JAPANESE_INDIGO}}>{transaction.type}</Text>
                             </View>
-                            <View style={{flexDirection:'row', marginHorizontal:5, marginBottom:5}}>
-                                <View style={{flex:1, flexDirection:'row', marginLeft:15}}>
-                                    <Text style={{fontWeight:'normal', color:theme.COLORS.JAPANESE_INDIGO}}>Usage ID: </Text><Text style={{color:theme.COLORS.JAPANESE_INDIGO}}>-</Text>
-                                </View>
-                                <View style={{flex:1, flexDirection:'row', justifyContent:'flex-end'}}>
+                            <View style={{flex:1, paddingRight:5, alignItems:'flex-end'}}>
+                                {this.formatTransactionAmount(transaction.transactionAmount, transaction.type)}
+                                <View style={{flexDirection:'row'}}>
                                     <Text style={{color:'gray'}}>Balance: </Text><Text style={{color:'gray'}}>{transaction.balanceAfter.toFixed(2)}</Text>
                                 </View>
                             </View>

@@ -64,7 +64,7 @@ export default class Transactions extends React.Component {
             <View style={styles.container}>
                 <View>
                     <TouchableOpacity style={{alignItems:'center', justifyContent:'center', margin:10, width:50, height:50,
-                        borderRadius:25, backgroundColor:theme.COLORS.JAPANESE_INDIGO}} 
+                        borderRadius:25, marginTop:30, backgroundColor:theme.COLORS.JAPANESE_INDIGO}} 
                         onPress= {() => this.props.navigation.toggleDrawer()}>
                         <Ionicons name="md-menu" color={theme.COLORS.SEASHELL} size={35}/>
                     </TouchableOpacity>

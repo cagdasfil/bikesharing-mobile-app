@@ -110,7 +110,7 @@ import DrawerItem from "../components/DrawerItem";
       initialRouteName: "Session"
     }
   );
-
+/*
   const UsageHistoryStack = createMaterialTopTabNavigator(
     {
       Usages: {screen: Usages},
@@ -131,6 +131,28 @@ import DrawerItem from "../components/DrawerItem";
       },
     }
   );
+*/
+
+const UsageHistoryStack = createBottomTabNavigator(
+  {
+    Usages: {screen: Usages},
+    Transactions: {screen: Transactions}
+  },
+  {
+    defaultNavigationOptions: ({navigation}) => ({
+      tabBarLabel: ({focused}) => {
+        const { routeName } = navigation.state;
+        return <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight: focused? "bold":"normal", fontSize:16}}> 
+                  {routeName}
+                </Text>
+      }
+    }),
+    tabBarOptions: {
+      style: {height:60, backgroundColor:theme.COLORS.SEASHELL},
+      tabStyle: {alignItems:'center', paddingBottom:20, borderTopColor:theme.COLORS.JAPANESE_INDIGO, borderTopWidth:1},
+    },
+  }
+);
 
 const AppStack = createDrawerNavigator(
     {

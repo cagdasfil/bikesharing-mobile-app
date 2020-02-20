@@ -13,8 +13,7 @@ export default class UsageCard extends React.Component {
 
     formatDate (date) {
         var datestring = 
-            " " 
-            + ("0" + date.getDate()).slice(-2)  + "/" 
+              ("0" + date.getDate()).slice(-2)  + "/" 
             + ("0" + (date.getMonth() + 1)).slice(-2)+ "/" 
             + date.getFullYear() + " " 
             + ("0" + date.getHours()).slice(-2) + ":" 
@@ -33,10 +32,10 @@ export default class UsageCard extends React.Component {
                         </View>
                         <View style={{flexDirection:'row', justifyContent:'center', marginVertical:10}}>
                             <View style={{alignItems:'center', flexDirection:'row'}}>
-                                <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Duration: </Text><Text style={{color: '#891705'}}>{parseInt(usage.duration)} min</Text>
+                                <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Duration: </Text><Text style={{color: 'crimson'}}>{parseInt(usage.duration)} min</Text>
                             </View>
                             <View style={{alignItems:'center', flexDirection:'row', marginLeft:25}}>
-                                <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Total: </Text><Text style={{color: '#047c16'}}>{usage.total.toFixed(2)}₺</Text>
+                                <Text style={{color:theme.COLORS.JAPANESE_INDIGO, fontWeight:'bold'}}>Total: </Text><Text style={{color: 'green'}}>{usage.total.toFixed(2)} ₺</Text>
                             </View>
                         </View>
                         <View style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}>
