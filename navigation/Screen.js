@@ -21,11 +21,11 @@ import Usages from '../screens/Usages';
 import Transactions from '../screens/Transactions';
 import Notifications from '../screens/Notifications';
 import Report from '../screens/Report';
+import Settings from "../screens/Settings";
 
 // drawer
 import Menu from "./Menu";
 import DrawerItem from "../components/DrawerItem";
-import Settings from "../screens/Settings";
 
   _retrieveData = async (dataContainer) => { // takes string input
     try {
