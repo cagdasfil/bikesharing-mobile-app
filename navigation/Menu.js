@@ -41,19 +41,21 @@ const Drawer = props => {
   return (
   <View style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
     <View flex={0.05} style={styles.header}>
-      <Image style={styles.logo} source={require("../assets/images/default_profile_picture.jpg")} />
+      <Ionicons name="md-contact" size={150} color={colortheme.COLORS.LAPIS_LAZULI} onPress={()=>console.log("press")} />
       <Text style={{fontWeight:'bold'}}>{username}</Text>
     </View>
     <View flex={1}>
       <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
         <DrawerItems {...props} />
-        <TouchableOpacity style={styles.exit} onPress={() => {
+        <View style={styles.exit} >
+        <TouchableOpacity style={{flexDirection:'row'}} onPress={() => {
             AsyncStorage.clear();
             props.navigation.navigate('Login');
           }}>
-          <Text style={{fontSize:16, marginRight:5, color:colortheme.COLORS.JAPANESE_INDIGO}}>EXIT</Text>
+          <Text style={{fontSize:16, marginRight:5, fontWeight:'bold', color:colortheme.COLORS.JAPANESE_INDIGO}}>EXIT</Text>
           <Ionicons name="md-exit" size={24} color={colortheme.COLORS.JAPANESE_INDIGO} />
         </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   </View>
@@ -104,7 +106,6 @@ const styles = StyleSheet.create({
       marginBottom:5
   },
   exit:{
-    flex:1,
     flexDirection:'row',
     alignItems:'center',
     justifyContent:'center',

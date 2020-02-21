@@ -19,10 +19,13 @@ import RecoveryPassword from '../screens/RecoveryPassword';
 import ResetPassword from '../screens/ResetPassword';
 import Usages from '../screens/Usages';
 import Transactions from '../screens/Transactions';
+import Notifications from '../screens/Notifications';
+import Report from '../screens/Report';
 
 // drawer
 import Menu from "./Menu";
 import DrawerItem from "../components/DrawerItem";
+import Settings from "../screens/Settings";
 
   _retrieveData = async (dataContainer) => { // takes string input
     try {
@@ -190,7 +193,7 @@ const AppStack = createDrawerNavigator(
         })
       },
       Notifications: {
-        screen: HomeStack,
+        screen: Notifications,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
             <DrawerItem focused={focused} title="Notifications" />
@@ -198,7 +201,7 @@ const AppStack = createDrawerNavigator(
         })
       },
       Report: {
-        screen: HomeStack,
+        screen: Report,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
             <DrawerItem focused={focused} title="Report" />
@@ -206,7 +209,7 @@ const AppStack = createDrawerNavigator(
         })
       },
       Settings: {
-        screen: HomeStack,
+        screen: Settings,
         navigationOptions: navOpt => ({
           drawerLabel: ({ focused }) => (
             <DrawerItem focused={focused} title="Settings" />
