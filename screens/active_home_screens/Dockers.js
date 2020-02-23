@@ -5,9 +5,9 @@ import MapView from 'react-native-maps';
 import theme from '../../constants/Theme';
 import {AsyncStorage} from 'react-native';
 var defaultRegion = {
-            latitude: 39.897053,
-            longitude: 32.778302,
-            latitudeDelta: 0.0522,
+            latitude: 0,
+            longitude: 0,
+            latitudeDelta: 0,
             longitudeDelta: 0,
 }
 export const getCurrentLocation = () => {
@@ -118,8 +118,7 @@ export default class Dockers extends React.Component{
               <Geojson 
                 geojson={this.state.virtualZones} 
                 strokeColor="red"
-                fillColor="red"
-                strokeWidth={2}
+                strokeWidth={3}
               />
              </MapView>
            

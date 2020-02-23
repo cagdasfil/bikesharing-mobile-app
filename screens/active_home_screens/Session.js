@@ -20,7 +20,13 @@ export default class Session extends React.Component{
           session: null,
           user: null,
           isLocked: true,
-          isOK: false
+          isOK: false,
+          position:{
+            latitude:0,
+            longitude:0,
+            latitudeDelta:0,
+            longitudeDelta:0,
+          },
         };
         this.resetStopwatch = this.resetStopwatch.bind(this);
         this.toggleStopwatch = this.toggleStopwatch.bind(this);
@@ -81,7 +87,7 @@ export default class Session extends React.Component{
             },
             body: JSON.stringify({
                 userId : this.state.user.user._id,
-                dockerId : "5e43153660f52141463b0ede"
+                location : [this.state.position.longitude,this.state.position.latitude]
             })
           }).then((response) => response.json()).then((responseJson) => {
                 this.setState({ loading: false, disabled: false });
@@ -164,7 +170,7 @@ export default class Session extends React.Component{
         this.setState({stopwatchStartTime:diff});
         this.setState({isWatchOK: true})
         diff = diff/60000.0;
-        totalPayment = 10;
+        totalPayment = 15;
         /*if(diff>5){
             totalPayment += 5.0
         }
@@ -210,6 +216,7 @@ export default class Session extends React.Component{
         var currentUser = null;
         currentUser = await this._retrieveData('user');
         currentSession = await this._retrieveData('session');
+        var position = await this._retrieveData('position');
         this.resetStopwatch();
         this.toggleStopwatch();
         if(currentSession === "null" || currentSession === null){
@@ -226,6 +233,13 @@ export default class Session extends React.Component{
             this.getLockStatus();
             this.interval = setInterval(() => {this.getAmount() }, 10000); 
         }
+        if(position != null){
+          position = JSON.parse(position);
+          this.setState({position:position});
+       }
+       else{
+         alert("Please Click The Dockers Page");
+       }
     }
 
     resetStopwatch() {
