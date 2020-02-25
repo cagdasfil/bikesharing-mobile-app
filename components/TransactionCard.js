@@ -2,11 +2,17 @@ import { View, Text} from 'react-native';
 import React from 'react';
 import theme from '../constants/Theme';
 import { ScrollView } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { Ionicons } from '@expo/vector-icons';
 
 export default class Transaction extends React.Component {
     
     constructor(props){
         super(props);
+        this.state={
+            visible: "",
+            type: "",
+        }
     }
 
     formatDate (date) {
@@ -22,9 +28,36 @@ export default class Transaction extends React.Component {
     formatTransactionAmount (amount, type) {
         if(type === "add"){
             return <Text style={{fontSize:28, color:'green'}}>+{amount.toFixed(2)}</Text>;
+                    
         }
         else{
             return <Text style={{fontSize:28, color:'crimson'}}>-{amount.toFixed(2)}</Text>;
+        }
+    }
+    
+
+    specializedType(key, type) {
+
+        
+        
+        if(type === "usage"){
+            return (<View style={{flexDirection:'row'}}>
+                        <TouchableOpacity onPress={ () => (this.state.visible === key ? this.setState({ visible: "" }): this.setState({ visible: key, type:"usage"})) }>
+                            <Text style={{fontWeight:'bold', marginLeft:15, fontSize:20, color:theme.COLORS.JAPANESE_INDIGO}}>{type} {this.state.visible === key ? <Ionicons  name='md-arrow-dropup-circle' size={20} color={"#FBC02D"}/> :  <Ionicons  name='md-arrow-dropdown-circle' size={20} color={"#FBC02D"}/>}</Text>
+                        </TouchableOpacity>
+                        
+                    </View>);
+                    
+        }
+        else if(type === "stoppage"){
+            return (<View style={{flexDirection:'row'}}>
+                        <TouchableOpacity onPress={ () => (this.state.visible === key ? this.setState({ visible: "" }): this.setState({ visible: key, type:"stoppage"})) }>
+                            <Text style={{fontWeight:'bold', marginLeft:15, fontSize:20, color:theme.COLORS.JAPANESE_INDIGO}}>{type} {this.state.visible === key ? <Ionicons  name='md-arrow-dropup-circle' size={20} color={"#FBC02D"}/> :  <Ionicons  name='md-arrow-dropdown-circle' size={20} color={"#FBC02D"}/>}</Text>
+                        </TouchableOpacity>
+                    </View>);
+        }
+        else{
+            return <Text style={{fontWeight:'bold', marginLeft:15, fontSize:20, color:theme.COLORS.JAPANESE_INDIGO}}>{type}</Text>
         }
     }
 
@@ -36,7 +69,20 @@ export default class Transaction extends React.Component {
                         <View key={transaction.key} style={{marginHorizontal:10, flexDirection:'row', marginTop:5, borderBottomWidth:1, borderColor:theme.COLORS.JAPANESE_INDIGO}}>
                             <View style={{flex:1, paddingLeft:5}}>
                                 <Text style={{fontWeight:'normal', color:theme.COLORS.JAPANESE_INDIGO}}>{this.formatDate(new Date(transaction.createdAt))}</Text>
-                                <Text style={{fontWeight:'bold', marginLeft:15, fontSize:20, color:theme.COLORS.JAPANESE_INDIGO}}>{transaction.type}</Text>
+                                {this.specializedType(transaction.key, transaction.type)}
+                                {transaction.key === this.state.visible  ?
+                                    <View style={{marginTop:5}}>
+                                        {this.state.type === "stoppage" ?
+                                            <Text style={{marginLeft:5, fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}> <Ionicons name='md-calendar' size={20} color={"#FBC02D"}/> Date: {this.formatDate(new Date(transaction.usageDate))} </Text>
+                                        :
+                                            <Text style={{marginLeft:5, fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}> <Ionicons name='md-cash' size={20} color={'#FBC02D'}/> Before Usage: {transaction.balanceBefore.toFixed(2)} ₺ </Text>
+                                        }
+                                        <Text style={{marginLeft:5, fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}> <Ionicons name='md-cash' size={20} color={'#FBC02D'}/> Total: {transaction.totalFee.toFixed(2)} ₺ </Text>
+                                        <Text style={{marginLeft:5, fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}> <Ionicons name='md-cash' size={20} color={'#FBC02D'}/> Debt: {transaction.debt.toFixed(2)} ₺ </Text>
+                                        <Text style={{marginLeft:5, fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}> <Ionicons name='md-clock' size={20} color={"#FBC02D"}/> Duration: {transaction.duration.toFixed(2)} min </Text>
+                                        <Text style={{marginLeft:5, fontSize:10, color:theme.COLORS.JAPANESE_INDIGO}}> METU Library  <Ionicons name='md-bicycle' size={20} color={"#FBC02D"}/>  METU A1 Gate </Text>
+                                    </View>
+                                : null}
                             </View>
                             <View style={{flex:1, paddingRight:5, alignItems:'flex-end'}}>
                                 {this.formatTransactionAmount(transaction.transactionAmount, transaction.type)}
