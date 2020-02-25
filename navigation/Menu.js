@@ -40,24 +40,22 @@ const Drawer = props => {
   retrieveUserName().then((result)=>{username=result});
   return (
   <View style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
-    <View flex={0.05} style={styles.header}>
+    <View style={styles.header}>
       <Ionicons name="md-contact" size={150} color={colortheme.COLORS.LAPIS_LAZULI} onPress={()=>console.log("press")} />
       <Text style={{fontWeight:'bold'}}>{username}</Text>
     </View>
-    <View flex={1}>
-      <ScrollView showsVerticalScrollIndicator={false} style={{ flex: 1 }}>
-        <DrawerItems {...props} />
-        <View style={styles.exit} >
-        <TouchableOpacity style={{flexDirection:'row'}} onPress={() => {
-            AsyncStorage.clear();
-            props.navigation.navigate('Login');
-          }}>
-          <Text style={{fontSize:16, marginRight:5, fontWeight:'bold', color:colortheme.COLORS.JAPANESE_INDIGO}}>EXIT</Text>
-          <Ionicons name="md-exit" size={24} color={colortheme.COLORS.JAPANESE_INDIGO} />
-        </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </View>
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <DrawerItems {...props} />
+      <View style={styles.exit} >
+      <TouchableOpacity style={{flexDirection:'row'}} onPress={() => {
+          AsyncStorage.clear();
+          props.navigation.navigate('Login');
+        }}>
+        <Text style={{fontSize:16, marginRight:5, fontWeight:'bold', color:colortheme.COLORS.JAPANESE_INDIGO}}>EXIT</Text>
+        <Ionicons name="md-exit" size={24} color={colortheme.COLORS.JAPANESE_INDIGO} />
+      </TouchableOpacity>
+      </View>
+    </ScrollView>
   </View>
 )};
 
@@ -94,16 +92,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    marginTop: theme.SIZES.BASE * 8,
-    marginBottom: theme.SIZES.BASE * 5,
+    marginTop: 50,
+    marginBottom: 10,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  logo: {
-      width:150,
-      height:150,
-      borderRadius:75,
-      marginBottom:5
   },
   exit:{
     flexDirection:'row',
