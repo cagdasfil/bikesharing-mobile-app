@@ -22,6 +22,7 @@ import Transactions from '../screens/Transactions';
 import Notifications from '../screens/Notifications';
 import Report from '../screens/Report';
 import Settings from "../screens/Settings";
+import Profile from "../screens/Profile";
 
 // drawer
 import Menu from "./Menu";
@@ -250,6 +251,14 @@ const AppStack = createDrawerNavigator(
             null
           ),
           drawerLockMode: "locked-closed"
+        })
+      },
+      Profile: {
+        screen: Profile,
+        navigationOptions: navOpt => ({
+          drawerLabel: ({ focused }) => (
+            null
+          ),
         })
       },
     },

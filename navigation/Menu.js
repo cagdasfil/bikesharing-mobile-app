@@ -41,7 +41,7 @@ const Drawer = props => {
   return (
   <View style={styles.container} forceInset={{ top: 'always', horizontal: 'never' }}>
     <View style={styles.header}>
-      <Ionicons name="md-contact" size={150} color={colortheme.COLORS.LAPIS_LAZULI} onPress={()=>console.log("press")} />
+      <Ionicons name="md-contact" size={150} color={colortheme.COLORS.LAPIS_LAZULI} onPress={()=>props.navigation.navigate('Profile')} />
       <Text style={{fontWeight:'bold'}}>{username}</Text>
     </View>
     <ScrollView showsVerticalScrollIndicator={false}>
