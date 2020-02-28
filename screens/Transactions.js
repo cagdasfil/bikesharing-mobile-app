@@ -12,6 +12,7 @@ export default class Transactions extends React.Component {
         this.state={
             userId: "",
             transactions: [],
+            visible: false
         }
     };
 
@@ -31,8 +32,24 @@ export default class Transactions extends React.Component {
                         transactionAmount: result.details.transactionAmount,
                         balanceAfter: result.details.balanceAfter,
                         type: result.operationType,
+                        duration: null, //(new Date(result.updatedAt) - new Date(result.createdAt))/60000,
+                        totalFee: null, //result.details.usage.totalFee,
+                        balanceBefore: null, //result.details.balanceBefore,
+                        debt: null,
+                        usageDate: null,
                     }))
                     this.setState({transactions});
+                    var i;
+                    for (let i = 0; i < this.state.transactions.length; i++) {
+                        
+                        if(this.state.transactions[i].type === "usage" || this.state.transactions[i].type === "stoppage"){
+                            transactions[i].duration = (new Date(responseJson.data[i].details.usage.updatedAt) - new Date(responseJson.data[i].details.usage.createdAt))/60000,
+                            transactions[i].totalFee = responseJson.data[i].details.usage.totalFee,
+                            transactions[i].debt = (responseJson.data[i].details.usage.totalFee - responseJson.data[i].details.transactionAmount),
+                            transactions[i].balanceBefore = responseJson.data[i].details.balanceBefore,
+                            transactions[i].usageDate = responseJson.data[i].details.usage.createdAt
+                        }
+                    }
             }).catch((error) => {
                 console.error(error);
                 this.setState({ loading: false, disabled: false });
