@@ -1,19 +1,16 @@
 import { StyleSheet, View, Dimensions, Text } from 'react-native';
 import React from 'react';
+import {Button,Icon} from 'react-native-elements';
 import Geojson from 'react-native-geojson';
 import MapView from 'react-native-maps';
 import theme from '../../constants/Theme';
 import {AsyncStorage} from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 var defaultRegion = {
-            latitude: 39.897053,
-            longitude: 32.778302,
-            latitudeDelta: 0.0522,
-            longitudeDelta: 0,
-}
-export const getCurrentLocation = () => {
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(position => resolve(position), e => reject(e));
-  });
+            latitude: 0,
+            longitude: 0,
+            latitudeDelta: 0,
+            longitudeDelta: 0
 };
 export default class Dockers extends React.Component{
   constructor (props) {
@@ -24,8 +21,8 @@ export default class Dockers extends React.Component{
           features:[],
         },
         region: defaultRegion,
-    };
-}
+    };}
+
   _storeData = async (dataContainer, data) => { //both parameters are string.
     try {
       await AsyncStorage.setItem(dataContainer, data);
@@ -44,7 +41,7 @@ export default class Dockers extends React.Component{
       console.log(error);
     }
   };
-
+  
   getBikes = async () => {
     this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
       fetch('http://35.234.156.204/dockers/withBikes', {
@@ -68,17 +65,11 @@ export default class Dockers extends React.Component{
             console.error(error);
             this.setState({ loading: false, disabled: false });
           });
-    });
+    })
   }
-
-
-  componenWillMount () {
-    this.interval = setInterval(() => this.getBikes(), 1000); // amount reload every 10 secs.
-  }
-
-  async componentDidMount() {
-    return getCurrentLocation().then(position => {
-      if (position) {
+  currentLocationButton = async () => {
+    navigator.geolocation.getCurrentPosition(
+      (position)=>{
         this.setState({
           region: {
             latitude: position.coords.latitude,
@@ -87,10 +78,32 @@ export default class Dockers extends React.Component{
             longitudeDelta: 0.003,
           },
         });
+      },
+      {enableHighAccuracy:false,timeout:20000,maximumAge:1000}
+    )
+    
+  };
+  componenWillMount () {
+    this.interval = setInterval(() => this.getBikes(), 1000); // amount reload every 10 secs.
+  };
+
+componentDidMount() {
+    navigator.geolocation.getCurrentPosition(
+      (position)=>{
+        this.setState({
+          region: {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudeDelta: 0.003,
+            longitudeDelta: 0.003,
+          },
+        });
+      },
+      {enableHighAccuracy:false,timeout:20000,maximumAge:1000}
+    )
         this._storeData("position", JSON.stringify(this.state.region));
-      }
-    });
-  }
+}
+  
 
   componentWillUnmount() {
     clearInterval(this.interval);
@@ -104,8 +117,9 @@ export default class Dockers extends React.Component{
           
           >
             <MapView
-                showsUserLocation={true}
+                
                 onMapReady = {this.getBikes}
+                showsUserLocation={true}
                 //onPress = {this.getBikes}
                 style={styles.mapStyle}
                 region={{
@@ -115,14 +129,21 @@ export default class Dockers extends React.Component{
                     longitudeDelta: this.state.region.longitudeDelta,
                   }}
               >
+              
               <Geojson 
                 geojson={this.state.virtualZones} 
                 strokeColor="red"
-                fillColor="red"
-                strokeWidth={2}
+                strokeWidth={3}
               />
+
              </MapView>
-           
+             <Button
+                onPress={this.currentLocationButton}
+                icon = {<Icon type='material-community' name='crosshairs-gps' size={30}></Icon>}
+                buttonStyle={{backgroundColor:'white', borderRadius:50} }
+                containerStyle={{position:'absolute',bottom:'12%',right:'7%'}}
+                 >
+                </Button>
           </View>
         );
     }
