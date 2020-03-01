@@ -54,7 +54,7 @@ export default class Usages extends React.Component {
         }
     };
 
-    async componentDidMount () {
+    async componentWillMount () {
         user = await this._retrieveData('user');
         userjsoned = JSON.parse(user);
         this.setState({userId : userjsoned.user._id});

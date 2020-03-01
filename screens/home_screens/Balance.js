@@ -1,5 +1,5 @@
 import {TextInput, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import React from 'react';
+import React, { useCallback } from 'react';
 import theme from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import {AsyncStorage} from 'react-native';
@@ -88,6 +88,7 @@ export default class Balance extends React.Component{
                   this._storeData("user",JSON.stringify(this.state.userjson));
                   this.props.navigation.navigate('Home');
                   this.getDebt(); // Check debt whenever adding money
+                  
                 }
                 else{
                   alert(responseJson.message);

@@ -1,5 +1,5 @@
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
-import React from 'react';
+import React, { useCallback } from 'react';
 import theme from '../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import {AsyncStorage} from 'react-native';
@@ -50,6 +50,7 @@ export default class Transactions extends React.Component {
                             transactions[i].usageDate = responseJson.data[i].details.usage.createdAt
                         }
                     }
+                   
             }).catch((error) => {
                 console.error(error);
                 this.setState({ loading: false, disabled: false });
@@ -69,7 +70,7 @@ export default class Transactions extends React.Component {
         }
     };
 
-    async componentDidMount () {
+    async componentWillMount () {
         user = await this._retrieveData('user');
         userjsoned = JSON.parse(user);
         this.setState({userId : userjsoned.user._id});

@@ -2,7 +2,7 @@ import { StyleSheet, View, Dimensions, Text } from 'react-native';
 import React from 'react';
 import {Button,Icon} from 'react-native-elements';
 import Geojson from 'react-native-geojson';
-import MapView from 'react-native-maps';
+import MapView,{Marker,MapViewAnimated} from 'react-native-maps';
 import theme from '../../constants/Theme';
 import {AsyncStorage} from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
@@ -12,6 +12,7 @@ var defaultRegion = {
             latitudeDelta: 0,
             longitudeDelta: 0
 };
+var featurf= null;
 export default class Dockers extends React.Component{
   constructor (props) {
     super(props);
@@ -20,6 +21,7 @@ export default class Dockers extends React.Component{
           type: 'FeatureCollection',
           features:[],
         },
+        markers:[],
         region: defaultRegion,
     };}
 
@@ -52,15 +54,31 @@ export default class Dockers extends React.Component{
         },
       }).then((response) => response.json()).then( async (responseJson) => {
             this.setState({ loading: false, disabled: false });
+            
             const features = responseJson.data.map((result) => ({
+                key:result.currentDocker.id,
                 type: result.currentDocker.coordinates.type,
                 properties:result.currentDocker.coordinates.properties,
                 geometry:result.currentDocker.coordinates.geometry,
+                center:result.center,
+                number: result.availableBikeNumber,
               }))
               
               this.setState(features.map((zones)=>(
                 this.state.virtualZones.features.push(zones)
-              )));
+              )))
+
+              const markers = this.state.virtualZones.features.map((result) => ({
+                key:result.key,
+                title:result.properties.name,
+                center:{
+                  latitude:result.center.geometry.coordinates[1],
+                  longitude:result.center.geometry.coordinates[0]
+                },
+                number:result.number,
+              }))
+              this.setState({markers});
+
         }).catch((error) => {
             console.error(error);
             this.setState({ loading: false, disabled: false });
@@ -129,12 +147,24 @@ componentDidMount() {
                     longitudeDelta: this.state.region.longitudeDelta,
                   }}
               >
-              
+
               <Geojson 
                 geojson={this.state.virtualZones} 
                 strokeColor="red"
                 strokeWidth={3}
               />
+              {
+               this.state.markers.map(marker  =>  ( 
+                  <Marker 
+                    key={marker.key}
+                    coordinate={marker.center}
+                    title={marker.title}
+                  >
+                    <View style={styles.marker}>
+                      <Text style={{color:theme.COLORS.SEASHELL, fontWeight:'bold', fontSize:18}}>{marker.number}</Text>
+                    </View>
+                </Marker>
+              ))}
 
              </MapView>
              <Button
