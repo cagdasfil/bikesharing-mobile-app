@@ -33,7 +33,11 @@
         "googleMaps": {
           "apiKey": "DE66FB9F7BD9AA58A108E1FADCFF36B1DB3AD824"
         }
+
       }
-    }
+    },
+    "androidStatusBar": {
+      "backgroundColor": "#eeeeee"
+  }
   }
 }

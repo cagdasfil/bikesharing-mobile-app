@@ -5,6 +5,7 @@ import Geojson from 'react-native-geojson';
 import MapView,{Marker,MapViewAnimated} from 'react-native-maps';
 import theme from '../../constants/Theme';
 import {AsyncStorage} from 'react-native';
+import MapViewDirections from 'react-native-maps-directions';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 var defaultRegion = {
             latitude: 0,
@@ -23,6 +24,10 @@ export default class Dockers extends React.Component{
         },
         markers:[],
         region: defaultRegion,
+        closestZone:{
+          latitude:39.907870142882636,
+          longitude:32.78393805027008
+        },
     };}
 
   _storeData = async (dataContainer, data) => { //both parameters are string.
@@ -43,7 +48,31 @@ export default class Dockers extends React.Component{
       console.log(error);
     }
   };
-  
+  findClosestZone  = async () => {
+    /*this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
+      fetch('http://35.234.156.204/dockers/findClosestZone'+this.state.region, {
+        method: 'GET',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+      }).then((response) => response.json()).then( async (responseJson) => {
+            this.setState({ loading: false, disabled: false });
+            this.setState({closestZone:{
+              lat:responseJson.latitude,
+              lon:responseJson.longitude,
+            }})
+
+        }).catch((error) => {
+            console.error(error);
+            this.setState({ loading: false, disabled: false });
+          });
+    })*/
+
+
+
+
+  }
   getBikes = async () => {
     this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
       fetch('http://35.234.156.204/dockers/withBikes', {
@@ -147,7 +176,7 @@ componentDidMount() {
                     longitudeDelta: this.state.region.longitudeDelta,
                   }}
               >
-
+              
               <Geojson 
                 geojson={this.state.virtualZones} 
                 strokeColor="red"
@@ -165,15 +194,29 @@ componentDidMount() {
                     </View>
                 </Marker>
               ))}
-
+              <MapViewDirections
+                apikey={'AIzaSyCxHq6S9wuGx5vrz_OxlTrReomRkMVDtdc'}
+                origin = {this.state.region}
+                destination = {this.state.closestZone}
+                strokeWidth={3}
+                strokeColor="hotpink"
+                mode = "WALKING"
+                />
              </MapView>
              <Button
+                onPress={this.currentLocationButton}
+                icon = {<Icon type='material-community' name='find-replace' size={30}></Icon>}
+                buttonStyle={{backgroundColor:'white', borderRadius:50} }
+                containerStyle={{position:'absolute',bottom:'24%',right:'7%'}}
+                 >
+                </Button>
+              <Button
                 onPress={this.currentLocationButton}
                 icon = {<Icon type='material-community' name='crosshairs-gps' size={30}></Icon>}
                 buttonStyle={{backgroundColor:'white', borderRadius:50} }
                 containerStyle={{position:'absolute',bottom:'12%',right:'7%'}}
                  >
-                </Button>
+              </Button>
           </View>
         );
     }
