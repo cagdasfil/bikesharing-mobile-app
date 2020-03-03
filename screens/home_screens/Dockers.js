@@ -8,8 +8,8 @@ import {AsyncStorage} from 'react-native';
 import MapViewDirections from 'react-native-maps-directions';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 var defaultRegion = {
-            latitude: 0,
-            longitude: 0,
+            "latitude": 0,
+            "longitude": 0,
             latitudeDelta: 0,
             longitudeDelta: 0
 };
@@ -25,9 +25,10 @@ export default class Dockers extends React.Component{
         markers:[],
         region: defaultRegion,
         closestZone:{
-          latitude:39.907870142882636,
-          longitude:32.78393805027008
+          latitude:0,
+          longitude:0
         },
+        flag:0,
     };}
 
   _storeData = async (dataContainer, data) => { //both parameters are string.
@@ -49,8 +50,8 @@ export default class Dockers extends React.Component{
     }
   };
   findClosestZone  = async () => {
-    /*this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
-      fetch('http://35.234.156.204/dockers/findClosestZone'+this.state.region, {
+    this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
+      fetch('http://35.234.156.204/dockers/closestZone/'+JSON.stringify(this.state.region),{
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -58,20 +59,19 @@ export default class Dockers extends React.Component{
         },
       }).then((response) => response.json()).then( async (responseJson) => {
             this.setState({ loading: false, disabled: false });
+            console.log(responseJson);
             this.setState({closestZone:{
-              lat:responseJson.latitude,
-              lon:responseJson.longitude,
+
+              latitude:responseJson.geometry.coordinates[1],
+              longitude:responseJson.geometry.coordinates[0],
             }})
+            this.setState({flag:1});
 
         }).catch((error) => {
             console.error(error);
             this.setState({ loading: false, disabled: false });
           });
-    })*/
-
-
-
-
+    })
   }
   getBikes = async () => {
     this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
@@ -107,7 +107,6 @@ export default class Dockers extends React.Component{
                 number:result.number,
               }))
               this.setState({markers});
-
         }).catch((error) => {
             console.error(error);
             this.setState({ loading: false, disabled: false });
@@ -119,8 +118,8 @@ export default class Dockers extends React.Component{
       (position)=>{
         this.setState({
           region: {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
+            "latitude": position.coords.latitude,
+            "longitude": position.coords.longitude,
             latitudeDelta: 0.003,
             longitudeDelta: 0.003,
           },
@@ -128,7 +127,7 @@ export default class Dockers extends React.Component{
       },
       {enableHighAccuracy:false,timeout:20000,maximumAge:1000}
     )
-    
+    console.log(this.state.region);
   };
   componenWillMount () {
     this.interval = setInterval(() => this.getBikes(), 1000); // amount reload every 10 secs.
@@ -194,7 +193,8 @@ componentDidMount() {
                     </View>
                 </Marker>
               ))}
-              <MapViewDirections
+              {this.state.flag ? 
+                <MapViewDirections
                 apikey={'AIzaSyCxHq6S9wuGx5vrz_OxlTrReomRkMVDtdc'}
                 origin = {this.state.region}
                 destination = {this.state.closestZone}
@@ -202,9 +202,11 @@ componentDidMount() {
                 strokeColor="hotpink"
                 mode = "WALKING"
                 />
+                :null
+              }
              </MapView>
              <Button
-                onPress={this.currentLocationButton}
+                onPress={this.findClosestZone}
                 icon = {<Icon type='material-community' name='find-replace' size={30}></Icon>}
                 buttonStyle={{backgroundColor:'white', borderRadius:50} }
                 containerStyle={{position:'absolute',bottom:'24%',right:'7%'}}
