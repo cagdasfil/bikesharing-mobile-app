@@ -59,7 +59,6 @@ export default class Dockers extends React.Component{
         },
       }).then((response) => response.json()).then( async (responseJson) => {
             this.setState({ loading: false, disabled: false });
-            console.log(responseJson);
             this.setState({closestZone:{
 
               latitude:responseJson.geometry.coordinates[1],
@@ -196,10 +195,10 @@ componentDidMount() {
               {this.state.flag ? 
                 <MapViewDirections
                 apikey={'AIzaSyCxHq6S9wuGx5vrz_OxlTrReomRkMVDtdc'}
-                origin = {this.state.region}
+                origin = {{latitude:39.88603083007855,longitude:32.781583070755005}}
                 destination = {this.state.closestZone}
                 strokeWidth={3}
-                strokeColor="hotpink"
+                strokeColor="darkblue"
                 mode = "WALKING"
                 />
                 :null

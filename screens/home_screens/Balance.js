@@ -35,7 +35,7 @@ export default class Balance extends React.Component{
     // It takes debt amount from database
     getDebt = async () => {
       this.setState({ loading: true, disabled: true }, async () => {
-        fetch('http://35.234.156.204/transactions/getDebt/'+ this.state.userId, {
+        fetch('http://35.234.156.204/payments/getDebt/'+ this.state.userId, {
           method: 'GET',
           headers: {
               Accept: 'application/json',
