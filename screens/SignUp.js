@@ -1,5 +1,6 @@
-import {Text, TextInput, View, Button } from 'react-native';
+import {StyleSheet,Text, TextInput, View, Button, KeyboardAvoidingView,ScrollView ,Image} from 'react-native';
 import React from 'react';
+import theme from '../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 
 export default class SignUp extends React.Component {
@@ -15,7 +16,13 @@ export default class SignUp extends React.Component {
                         eMail: "",
                         birthDate: "",
                         loading: false,
-                        disabled: false 
+                        disabled: false ,
+                        passwordValid:true,
+                        birthDateValid:true,
+                        phoneValid:true,
+                        tcValid:true,
+                        eMailValid:true,
+
                       }
   }
   
@@ -145,70 +152,91 @@ export default class SignUp extends React.Component {
   
   render() {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Username</Text>
+      <KeyboardAvoidingView style={{ flex: 1, flexDirection: 'column',justifyContent: 'center',}} behavior="padding" enabled   keyboardVerticalOffset={0}>
+         <ScrollView>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor: theme.COLORS.SEASHELL}}>
+        <Image
+          style={{width:300, height:60, marginBottom:40, marginTop:70}}
+          source={require("../assets/images/logo.png")} />
+        <Text></Text>
         <TextInput 
-          /*onChangeText={(text)=>this.validate(text, 'username')}*/
-          placeholder="Enter Username"
-          style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+          textAlignVertical="center"
+          placeholder="  Enter Username"
+          style={styles.textInputStyle}
           onChangeText = {(text) => this.setState({ username: text })}
         />
-        <Text>Password</Text>
+        <Text></Text>
         <TextInput
-          placeholder="Enter Password"
-          style={[{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}, !this.state.passwordValid? {borderWidth:3,borderColor:'red'}:null]}
+          placeholder="  Enter Password"
+          style={[styles.textInputStyle, !this.state.passwordValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'password')}
           secureTextEntry
         />
-        <Text>Confirm Password</Text>
+        <Text></Text>
         <TextInput
-          placeholder="Repeat Password"
+          placeholder="  Repeat Password"
           leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
-          style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+          style={styles.textInputStyle}
           onChangeText = {(text) => this.setState({ password: text })}
           secureTextEntry
         />
-        <Text>T.C.</Text>
+        <Text></Text>
         <TextInput
-          placeholder="eg:(xxx) xxx-xxxx"
-          style={[{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}, !this.state.tcValid? {borderWidth:3,borderColor:'red'}:null]}
+          placeholder="  T.C.  eg:XXXXXXXXXXX"
+          style={[styles.textInputStyle, !this.state.tcValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'tc')}
         />
-        <Text>Name</Text>
+        <Text></Text>
         <TextInput
-          placeholder="Enter Name"
-          style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+          placeholder="  Enter Name"
+          style={styles.textInputStyle}
           onChangeText = {(text) => this.setState({ name: text })}
         />
-        <Text>Surname</Text>
+        <Text></Text>
         <TextInput
-          placeholder="Enter Surname"
-          style={{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}}
+          placeholder="  Enter Surname"
+          style={styles.textInputStyle}
           onChangeText = {(text) => this.setState({ surname: text })}
         />
-        <Text>Phone Number</Text>
+        <Text></Text>
         <TextInput
-          placeholder="eg:(xxx)xxxxxxx"
-          style={[{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}, !this.state.phoneValid? {borderWidth:3,borderColor:'red'}:null]}
+          placeholder="  Phone eg:(xxx)xxxxxxx"
+          style={[styles.textInputStyle, !this.state.phoneValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'phone')}
         />
-        <Text>E-mail</Text>
+        <Text></Text>
         <TextInput
-          placeholder="example@bikesharing.com"
-          style={[{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}, !this.state.eMailValid? {borderWidth:3,borderColor:'red'}:null]}
+          placeholder="  example@bikesharing.com"
+          style={[styles.textInputStyle, !this.state.eMailValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'email')}
         />
-        <Text>Birth Date</Text>
+        <Text></Text>
         <TextInput
-          placeholder="DD/MM/YYYY"
-          style={[{height:30, width:200, backgroundColor:"#fff", borderColor:"#000", borderWidth:2}, !this.state.birthDateValid? {borderWidth:3,borderColor:'red'}:null]}
+          
+          placeholder="  DD/MM/YYYY"
+          style={[styles.textInputStyle, !this.state.birthDateValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'birthday')}
         />
+        <Text></Text>
         <Button title="Sign Up"
           onPress = { this.saveData }
         />
       </View>
+      </ScrollView>
+      </KeyboardAvoidingView>
     );
   }
 }
-  
+const styles = StyleSheet.create({
+  textInputStyle:{
+    height:40, 
+    width:200, 
+    backgroundColor:"#fff", 
+    borderColor:"#000", 
+    borderWidth:0,
+    margin:10,
+    padding:10,
+    fontSize:14
+
+  }
+})
