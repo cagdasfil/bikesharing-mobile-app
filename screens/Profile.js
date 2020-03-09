@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, TextInput, Text, ScrollView } from 'react-native';
+import { View, TouchableOpacity, TextInput, Text, KeyboardAvoidingView,ScrollView ,StyleSheet} from 'react-native';
 import theme from '../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import {AsyncStorage} from 'react-native';
@@ -9,9 +9,43 @@ export default class Profile extends React.Component{
     constructor(props){
         super(props);
         this.state={
-            user:{}
+            user:{},
+            phone:null,
+            email:null,
+            username:null
         };
     }
+    saveData = () => {
+        this.setState({ loading: true, disabled: true }, () => {
+          fetch('http://35.234.156.204/users/'+this.state.user._id, {
+            method: 'PUT',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                phone : this.state.phone,
+                email : this.state.email,
+                username : this.state.username,
+                tcNo : this.state.tcNo,
+                name : this.state.user.name,
+                surname : this.state.user.surname,
+                password : this.state.user.password,
+            })
+          }).then((response) => response.json()).then((responseJson) => {
+                console.log(responseJson)
+                if(responseJson.statusCode==400){
+                    alert(responseJson.message[0].messages[0].message);
+                }
+                else alert("Profile was updated successfully.");
+                
+                this.setState({ loading: false, disabled: false });
+            }).catch((error) => {
+                console.error(error);
+                this.setState({ loading: false, disabled: false });
+              });
+        });
+      }
 
     _retrieveData = async (dataContainer) => { // takes string input
         try {
@@ -29,7 +63,11 @@ export default class Profile extends React.Component{
         user = await this._retrieveData('user');
         userjsoned = JSON.parse(user);
         this.setState({user:userjsoned.user})
-        console.log(this.state.user);
+        this.setState({
+            phone : this.state.user.phone,
+            email : this.state.user.email,
+            username : this.state.user.username,
+        })
     }
 
     render(){
@@ -45,30 +83,76 @@ export default class Profile extends React.Component{
                     <Ionicons name="md-contact" size={150} style={{color:theme.COLORS.LAPIS_LAZULI}} />
                 </View>
                 </View>
-                <ScrollView style={{flex:1, marginHorizontal:40, marginTop:130}}>
-                    <Text style={{marginBottom:5, color:theme.COLORS.JAPANESE_INDIGO}}>T.C. number </Text>
-                    <TextInput style={{borderWidth:1, borderRadius:3, borderColor:theme.COLORS.JAPANESE_INDIGO,
-                        backgroundColor:"lightgray", marginBottom:5, paddingLeft:5}} value={this.state.user.tcNo} editable={false}/>
-                    <Text style={{marginBottom:5, color:theme.COLORS.JAPANESE_INDIGO}}>Name </Text>
-                    <TextInput style={{borderWidth:1, borderRadius:3, borderColor:theme.COLORS.JAPANESE_INDIGO,
-                        backgroundColor:"lightgray", marginBottom:5, paddingLeft:5}} value={this.state.user.name} editable={false}/>
-                    <Text style={{marginBottom:5, color:theme.COLORS.JAPANESE_INDIGO}}>Surname </Text>
-                    <TextInput style={{borderWidth:1, borderRadius:3, borderColor:theme.COLORS.JAPANESE_INDIGO,
-                        backgroundColor:"lightgray", marginBottom:5, paddingLeft:5}} value={this.state.user.surname} editable={false}/>
-                    <Text style={{marginBottom:5, color:theme.COLORS.JAPANESE_INDIGO}}>Username </Text>
-                    <TextInput style={{borderWidth:1, borderRadius:3, borderColor:theme.COLORS.JAPANESE_INDIGO,
-                        backgroundColor:"white", marginBottom:5, paddingLeft:5}} value={this.state.user.username}/>
-                    <Text style={{marginBottom:5, color:theme.COLORS.JAPANESE_INDIGO}}>E-mail </Text>
-                    <TextInput style={{borderWidth:1, borderRadius:3, borderColor:theme.COLORS.JAPANESE_INDIGO,
-                        backgroundColor:"white", marginBottom:5, paddingLeft:5}} value={this.state.user.email}/>
-                    <Text style={{marginBottom:5, color:theme.COLORS.JAPANESE_INDIGO}}>Phone </Text>
-                    <TextInput style={{borderWidth:1, borderRadius:3, borderColor:theme.COLORS.JAPANESE_INDIGO,
-                        backgroundColor:"white", marginBottom:5, paddingLeft:5}} value={this.state.user.phone}/>
-                    <TouchableOpacity style={{marginHorizontal:70, marginVertical:30, alignItems:'center', backgroundColor:theme.COLORS.JAPANESE_INDIGO}}>
+                <KeyboardAvoidingView style={{ flex: 1, flexDirection: 'column',justifyContent: 'center',}} behavior="padding" enabled   keyboardVerticalOffset={0}>
+                <ScrollView 
+                    style={{flex:1, marginHorizontal:40, marginTop:130}}>
+                    <Text 
+                        style={styles.textStyle}>T.C. number </Text>
+                    <TextInput 
+                        style={styles.textInputStyle} 
+                        value={this.state.user.tcNo} 
+                        editable={false}/>
+                    <Text 
+                        style={styles.textStyle}>Name </Text>
+                    <TextInput 
+                        style={styles.textInputStyle} 
+                        value={this.state.user.name} 
+                        editable={false}/>
+                    <Text 
+                        style={styles.textStyle}>Surname </Text>
+                    <TextInput 
+                        style={styles.textInputStyle} 
+                        value={this.state.user.surname} 
+                        editable={false}/>
+                    <Text 
+                        style={styles.textStyle}>Username </Text>
+                    <TextInput 
+                        style={styles.textInputStyle} 
+                        placeholder={this.state.user.username}
+                        onChangeText = {(text) => this.setState({ username: text })}/>
+                    <Text 
+                        style={styles.textStyle}>E-mail </Text>
+                    <TextInput 
+                        style={styles.textInputStyle} 
+                        placeholder={this.state.user.email}
+                        onChangeText = {(text) => this.setState({ email: text })}/>
+                    <Text 
+                        style={styles.textStyle}>Phone </Text>
+                    <TextInput 
+                        style={styles.textInputStyle} 
+                        placeholder={this.state.user.phone}
+                        onChangeText = {(text) => this.setState({ phone: text })}
+                        />
+                    <TouchableOpacity onPress={this.saveData}
+                        style={{
+                            marginHorizontal:70, 
+                            marginVertical:30, 
+                            alignItems:'center', 
+                            backgroundColor:theme.COLORS.JAPANESE_INDIGO,
+                            
+                            }}
+                            
+                            >
                         <Text style={{color:theme.COLORS.SEASHELL, padding:5, fontWeight:'bold'}}>SAVE</Text>
                     </TouchableOpacity>
                 </ScrollView>
+                </KeyboardAvoidingView>
             </View>
         );
     }
 };
+
+const styles = StyleSheet.create({
+    textStyle:{
+        marginBottom:5, 
+        color:theme.COLORS.JAPANESE_INDIGO
+    },
+    textInputStyle:{
+        borderWidth:1, 
+        borderRadius:3, 
+        borderColor:theme.COLORS.JAPANESE_INDIGO,
+        backgroundColor:"white", 
+        marginBottom:5, 
+        paddingLeft:5
+    }
+  })

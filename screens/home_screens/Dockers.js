@@ -82,7 +82,7 @@ export default class Dockers extends React.Component{
         },
       }).then((response) => response.json()).then( async (responseJson) => {
             this.setState({ loading: false, disabled: false });
-            
+
             const features = responseJson.data.map((result) => ({
                 key:result.currentDocker.id,
                 type: result.currentDocker.coordinates.type,
@@ -195,7 +195,7 @@ componentDidMount() {
               {this.state.flag ? 
                 <MapViewDirections
                 apikey={'AIzaSyCxHq6S9wuGx5vrz_OxlTrReomRkMVDtdc'}
-                origin = {{latitude:39.88603083007855,longitude:32.781583070755005}}
+                origin = {{latitude:this.state.region.latitude,longitude:this.state.region.longitude}}
                 destination = {this.state.closestZone}
                 strokeWidth={3}
                 strokeColor="darkblue"

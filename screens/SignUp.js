@@ -29,7 +29,7 @@ export default class SignUp extends React.Component {
   
   saveData = () => {
     this.setState({ loading: true, disabled: true }, () => {
-      fetch('http://144.122.192.199:3000/users/register', {
+      fetch('http://35.234.156.204/users/register', {
         method: 'POST',
         headers: {
             Accept: 'application/json',
@@ -158,21 +158,21 @@ export default class SignUp extends React.Component {
         <Image
           style={{width:300, height:60, marginBottom:40, marginTop:70}}
           source={require("../assets/images/logo.png")} />
-        <Text></Text>
+    
         <TextInput 
           textAlignVertical="center"
-          placeholder="  Enter Username"
+          placeholder="  Username"
           style={styles.textInputStyle}
           onChangeText = {(text) => this.setState({ username: text })}
         />
-        <Text></Text>
+  
         <TextInput
-          placeholder="  Enter Password"
+          placeholder="  Password"
           style={[styles.textInputStyle, !this.state.passwordValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'password')}
           secureTextEntry
         />
-        <Text></Text>
+     
         <TextInput
           placeholder="  Repeat Password"
           leftIcon={{ type: 'font-awesome', name: 'chevron-left' }}
@@ -180,44 +180,44 @@ export default class SignUp extends React.Component {
           onChangeText = {(text) => this.setState({ password: text })}
           secureTextEntry
         />
-        <Text></Text>
+        
         <TextInput
           placeholder="  T.C.  eg:XXXXXXXXXXX"
           style={[styles.textInputStyle, !this.state.tcValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'tc')}
         />
-        <Text></Text>
+       
         <TextInput
-          placeholder="  Enter Name"
+          placeholder="  Name"
           style={styles.textInputStyle}
           onChangeText = {(text) => this.setState({ name: text })}
         />
-        <Text></Text>
+       
         <TextInput
-          placeholder="  Enter Surname"
+          placeholder="  Surname"
           style={styles.textInputStyle}
           onChangeText = {(text) => this.setState({ surname: text })}
         />
-        <Text></Text>
+        
         <TextInput
           placeholder="  Phone eg:(xxx)xxxxxxx"
           style={[styles.textInputStyle, !this.state.phoneValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'phone')}
         />
-        <Text></Text>
+        
         <TextInput
-          placeholder="  example@bikesharing.com"
+          placeholder="  Email example@bikesharing.com"
           style={[styles.textInputStyle, !this.state.eMailValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'email')}
         />
-        <Text></Text>
+        
         <TextInput
           
-          placeholder="  DD/MM/YYYY"
+          placeholder="  Birthday DD/MM/YYYY"
           style={[styles.textInputStyle, !this.state.birthDateValid? {borderWidth:3,borderColor:'red'}:null]}
           onChangeText = {(text) => this.validate(text, 'birthday')}
         />
-        <Text></Text>
+       
         <Button title="Sign Up"
           onPress = { this.saveData }
         />
@@ -230,11 +230,19 @@ export default class SignUp extends React.Component {
 const styles = StyleSheet.create({
   textInputStyle:{
     height:40, 
-    width:200, 
-    backgroundColor:"#fff", 
+    width:250, 
     borderColor:"#000", 
+    borderRadius:14,
     borderWidth:0,
-    margin:10,
+    backgroundColor:'#fff',
+    shadowColor: "#000000",
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    shadowOffset: {
+      height: 1,
+      width: 1
+    },
+    margin:5,
     padding:10,
     fontSize:14
 
