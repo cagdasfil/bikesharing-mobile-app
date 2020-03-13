@@ -33,6 +33,7 @@
     "react-native-hide-show-password-input": "^1.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-keyboard-aware-scrollview": "^2.1.0",
+    "react-native-link": "^4.1.0",
     "react-native-maps": "~0.25.0",
     "react-native-maps-directions": "^1.7.3",
     "react-native-permissions": "^2.0.4",
@@ -48,7 +49,8 @@
     "react-navigation-tabs": "^2.6.0",
     "react-toggle-button": "^2.2.0",
     "rn-toggle-switch": "^1.0.2",
-    "toggle-switch-react-native": "^2.1.0"
+    "toggle-switch-react-native": "^2.1.0",
+    "expo-image-picker": "~7.0.0"
   },
   "devDependencies": {
     "babel-preset-expo": "^7.1.0"
