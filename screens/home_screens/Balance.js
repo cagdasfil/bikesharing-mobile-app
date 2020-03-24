@@ -6,7 +6,12 @@ import {AsyncStorage} from 'react-native';
 import RBSheet from "react-native-raw-bottom-sheet";
 import Dialog from 'react-native-dialog';
 import Modal from "react-native-modal";
-
+var defaultRegion = {
+  latitude: 0,
+  longitude: 0,
+  latitudeDelta: 0,
+  longitudeDelta: 0
+};
 
 export default class Balance extends React.Component{
 
@@ -28,7 +33,8 @@ export default class Balance extends React.Component{
             disabled: false ,
             numberValid: false,
             inDebt: false,
-            currentDept: 5
+            currentDept: 5,
+            region:defaultRegion
         };
     }
 
@@ -156,7 +162,22 @@ export default class Balance extends React.Component{
         }
       };
 
-    async componentDidMount (){
+    componentDidMount (){
+      navigator.geolocation.getCurrentPosition(
+        (position)=>{
+          this.setState({
+            region: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              latitudeDelta: 0.003,
+              longitudeDelta: 0.003,
+            },
+          });
+        },
+        {enableHighAccuracy:false,timeout:20000,maximumAge:1000}
+      )
+      this._storeData("position", JSON.stringify(this.state.region));
+      
       const {navigation} = this.props;
       this.focusListener = navigation.addListener('didFocus', async () => { 
         user = await this._retrieveData('user');
@@ -164,6 +185,8 @@ export default class Balance extends React.Component{
         this.setState({balance : userjsoned.user.balance})
         this.getDebt(); // When back to balance page, check debt again
       });
+      
+     
       
     }
     

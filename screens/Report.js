@@ -1,5 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import * as Permissions from 'expo-permissions';
+import {AsyncStorage} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import {
     View, 
@@ -19,16 +20,8 @@ import theme from '../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 const createFormData = (photo) => {
   const data = new FormData();
-
-  data.append("photo", {
-    name: photo.fileName,
-    type: photo.type,
-    uri:
-      Platform.OS === "android" ? photo.uri : photo.uri.replace("file://", "")
-  });
-
-  
-
+  data.append('files',photo);
+  //console.log(data);
   return data;
 };
 
@@ -38,10 +31,72 @@ export default class Report extends React.Component{
         this.state={
             title:null,
             description:null,
-            image:null
+            image:null,
+            user:null,
+            position:null,
+            uploadedId:null,
     }
   }
+  _storeData = async (dataContainer, data) => { //both parameters are string.
+    try {
+      await AsyncStorage.setItem(dataContainer, data);
+    } catch (error) {
+      // Error saving data
+      console.log(error);
+    }
+  };
 
+  _retrieveData = async (data) => { // takes string input
+    try {
+      const value = await AsyncStorage.getItem(data);
+      return value;
+    } catch (error) {
+      // Error retrieving data
+      console.log(error);
+    }
+  };
+   async componentWillMount(){
+    var currentUser =  await this._retrieveData('user');
+    var position =  await this._retrieveData('position');
+    if(user != null){
+        currentUser = JSON.parse(currentUser);
+        this.setState({user:currentUser.user});
+    }
+    else{
+        alert("User authentication failed.");
+    }
+    if(position != null){
+       position = JSON.parse(position);
+       this.setState({position:position});
+    }
+    else{
+      alert("Please Click The Zones Page");
+    }
+    console.log(position)
+  }
+
+  saveImage = () => {
+    console.log(this.state.image);
+    this.setState({ loading: true, disabled: true }, () => {
+      fetch('http://35.234.156.204/upload', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        
+        body:JSON.stringify(this.state.image)
+      }).then((response) => response.json()).then((responseJson) => {
+            console.log(responseJson)
+            this.saveData();
+            
+            this.setState({ loading: false, disabled: false });
+        }).catch((error) => {
+            console.error(error);
+            this.setState({ loading: false, disabled: false });
+          });
+    });
+  }
   saveData = () => {
     if(this.state.title==null){
       alert("Title cannot be empty.")
@@ -58,20 +113,22 @@ export default class Report extends React.Component{
             Accept: 'application/json',
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            title:this.state.title,
-            description:this.state.description,
-            image:createFormData(this.state.image)
-        })
+        
+        body:JSON.stringify({
+          userId:this.state.user._id,
+          userLocation:{
+            latitude:this.state.position.latitude,
+            longitude:this.state.position.longitude
+          },
+          title:this.state.title,
+          description:this.state.description,
+      })
       }).then((response) => response.json()).then((responseJson) => {
             console.log(responseJson)
-            if(responseJson.statusCode!=200){
-                alert(responseJson.message);
-            }
-            else {
-              alert("Report Sent Successfully.");
-              this.props.navigation.navigate('Balance');
-            }
+      
+            alert("Report Sent Successfully.");
+            this.props.navigation.navigate('Balance');
+            
             this.setState({ loading: false, disabled: false });
         }).catch((error) => {
             console.error(error);
@@ -81,7 +138,7 @@ export default class Report extends React.Component{
   }
     componentDidMount() {
       this.getPermissionAsync();
-      console.log('hi');
+      //console.log('hi');
     }
     getPermissionAsync = async () => {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -99,10 +156,14 @@ export default class Report extends React.Component{
         quality: 1
       });
   
-      console.log(result);
+      //console.log(result);
   
       if (!result.cancelled) {
-        this.setState({ image: result.uri });
+        this.setState({image:{
+          "uri":result.uri,
+          "type":result.type,
+          "name":"deneme.jpg",
+        }});
       }
     };
     _launchCamera = async () => {
@@ -113,10 +174,14 @@ export default class Report extends React.Component{
         quality: 1
       });
   
-      console.log(result);
+      //console.log(result);
   
       if (!result.cancelled) {
-        this.setState({ image: result.uri });
+        this.setState({image:{
+                  uri:result.uri,
+                  type:result.type,
+                  name:result.name,
+                }});
       }
     };
     render(){
@@ -173,9 +238,9 @@ export default class Report extends React.Component{
                     </View>
                     <View style={{flexDirection:'row', alignItems:'center', marginLeft:5, justifyContent: 'center' }}>
                       {image &&
-                          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />}
+                          <Image source={{ uri: image.uri }} style={{ width: 200, height: 200 }} />}
                     </View>
-                    <TouchableOpacity onPress={this.saveData}
+                    <TouchableOpacity onPress={this.state.image ? this.saveImage : this.saveData}
                         style={{marginVertical:40, marginHorizontal:60, backgroundColor:theme.COLORS.JAPANESE_INDIGO,
                             flexDirection:"row", alignItems:'center', justifyContent:'center', height:40}}>
                         <Text style={{fontWeight:'bold', fontSize:16, color:"white"}}>SEND</Text>
