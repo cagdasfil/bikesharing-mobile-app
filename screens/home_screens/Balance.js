@@ -6,12 +6,6 @@ import {AsyncStorage} from 'react-native';
 import RBSheet from "react-native-raw-bottom-sheet";
 import Dialog from 'react-native-dialog';
 import Modal from "react-native-modal";
-var defaultRegion = {
-  latitude: 0,
-  longitude: 0,
-  latitudeDelta: 0,
-  longitudeDelta: 0
-};
 
 export default class Balance extends React.Component{
 
@@ -34,7 +28,10 @@ export default class Balance extends React.Component{
             numberValid: false,
             inDebt: false,
             currentDept: 5,
-            region:defaultRegion
+            region:null,
+            lastLat:null,
+            lastLong:null,
+            
         };
     }
 
@@ -161,37 +158,46 @@ export default class Balance extends React.Component{
           console.log(error);
         }
       };
+    
 
-    componentDidMount (){
-      navigator.geolocation.getCurrentPosition(
-        (position)=>{
-          this.setState({
-            region: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              latitudeDelta: 0.003,
-              longitudeDelta: 0.003,
-            },
-          });
-        },
-        {enableHighAccuracy:false,timeout:20000,maximumAge:1000}
-      )
+    onRegionChange(region, lastLat, lastLong) {
+      this.setState({
+        region: region,
+        // If there are no new values set the current ones
+        lastLat: lastLat || this.state.lastLat,
+        lastLong: lastLong || this.state.lastLong
+      });
       this._storeData("position", JSON.stringify(this.state.region));
-      
+    }
+    
+    componentDidMount (){
+      navigator.geolocation.getCurrentPosition((position) => {
+        let region = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          latitudeDelta:0.3,
+          longitudeDelta:0.3,
+        }
+        this.onRegionChange(region,region.latitude,region.longitude);
+        }, (error) => {
+        alert(JSON.stringify(error))
+         }, {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 1000
+        });
+
       const {navigation} = this.props;
       this.focusListener = navigation.addListener('didFocus', async () => { 
         user = await this._retrieveData('user');
         userjsoned = JSON.parse(user);
         this.setState({balance : userjsoned.user.balance})
         this.getDebt(); // When back to balance page, check debt again
-      });
-      
-     
-      
+      });   
     }
-    
     componentWillUnmount(){
       this.focusListener.remove();
+      navigator.geolocation.clearWatch(this.watchID);
     }
 
     async componentWillMount () {
@@ -206,8 +212,7 @@ export default class Balance extends React.Component{
         else{
             alert("User authentication failed.");
             this.state.balance = -0.01;
-        }
-        
+        } 
     }
 
     validate(text, type){

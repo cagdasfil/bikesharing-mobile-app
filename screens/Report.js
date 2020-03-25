@@ -72,7 +72,6 @@ export default class Report extends React.Component{
     else{
       alert("Please Click The Zones Page");
     }
-    console.log(position)
   }
 
   saveImage = () => {
