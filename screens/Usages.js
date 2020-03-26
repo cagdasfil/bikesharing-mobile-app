@@ -30,8 +30,8 @@ export default class Usages extends React.Component {
                         createdAt: result.currentUsage.createdAt,
                         duration: (new Date(result.currentUsage.updatedAt) - new Date(result.currentUsage.createdAt))/60000,
                         total: result.currentUsage.totalFee,
-                        startDockerName: result.startDocker.address,
-                        endDockerName: result.endDocker.address
+                        startZoneName: result.startZone.address,
+                        endZoneName: result.endZone.address
                     }))
                     
                     this.setState({usages});

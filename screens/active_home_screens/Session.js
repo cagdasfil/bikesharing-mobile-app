@@ -238,7 +238,7 @@ export default class Session extends React.Component{
           this.setState({position:position});
        }
        else{
-         alert("Please Click The Dockers Page");
+         alert("Please Click The Zones Page");
        }
     }
 

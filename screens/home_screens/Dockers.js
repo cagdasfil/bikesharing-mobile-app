@@ -14,7 +14,7 @@ var defaultRegion = {
             longitudeDelta: 0
 };
 var featurf= null;
-export default class Dockers extends React.Component{
+export default class Zones extends React.Component{
   constructor (props) {
     super(props);
     this.state={
@@ -51,7 +51,7 @@ export default class Dockers extends React.Component{
   };
   findClosestZone  = async () => {
     this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
-      fetch('http://35.234.156.204/dockers/closestZone/'+JSON.stringify(this.state.region),{
+      fetch('http://35.234.156.204/zones/closestZone/'+JSON.stringify(this.state.region),{
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -61,8 +61,8 @@ export default class Dockers extends React.Component{
             this.setState({ loading: false, disabled: false });
             this.setState({closestZone:{
 
-              latitude:responseJson.geometry.coordinates[1],
-              longitude:responseJson.geometry.coordinates[0],
+              latitude:responseJson.data.geometry.coordinates[1],
+              longitude:responseJson.data.geometry.coordinates[0],
             }})
             this.setState({flag:1});
 
@@ -74,7 +74,7 @@ export default class Dockers extends React.Component{
   }
   getBikes = async () => {
     this.setState({ loading: true, disabled: true ,responseJS: ""}, () => {
-      fetch('http://35.234.156.204/dockers/withBikes', {
+      fetch('http://35.234.156.204/zones/withBikes', {
         method: 'GET',
         headers: {
             Accept: 'application/json',
@@ -82,12 +82,11 @@ export default class Dockers extends React.Component{
         },
       }).then((response) => response.json()).then( async (responseJson) => {
             this.setState({ loading: false, disabled: false });
-
             const features = responseJson.data.map((result) => ({
-                key:result.currentDocker.id,
-                type: result.currentDocker.coordinates.type,
-                properties:result.currentDocker.coordinates.properties,
-                geometry:result.currentDocker.coordinates.geometry,
+                key:result.currentZone.id,
+                type: result.currentZone.polygon.type,
+                properties:result.currentZone.polygon.properties,
+                geometry:result.currentZone.polygon.geometry,
                 center:result.center,
                 number: result.availableBikeNumber,
               }))
@@ -126,7 +125,6 @@ export default class Dockers extends React.Component{
       },
       {enableHighAccuracy:false,timeout:20000,maximumAge:1000}
     )
-    console.log(this.state.region);
   };
   componenWillMount () {
     this.interval = setInterval(() => this.getBikes(), 1000); // amount reload every 10 secs.
